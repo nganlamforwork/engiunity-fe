@@ -11,9 +11,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { logout } from "@/store/slice/authSlice";
 import { RootState, useAppDispatch, useAppSelector } from "@/store";
 import { useRouter } from "next/navigation";
+import { routes } from "@/utils/routes";
 
 const Header = () => {
   const { setTheme } = useTheme();
@@ -25,25 +35,48 @@ const Header = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    router.push("/log-in");
+    router.push("/");
   };
   return (
     <div className="shadow-sm w-full sticky top-0 bg-white dark:bg-gray-900 z-[9]">
       <div className="w-full mx-auto max-w-7xl py-2  flex items-center justify-between">
-        <div className="flex items-center justify-between flex-1 gap-9">
+        <div className="flex items-center justify-between flex-1 gap-9 relative">
           <div>
-            <Link href="/" className="font-black text-[20px] text-primary">
+            <Link
+              href="/"
+              className="font-black text-[20px] text-primary hover:underline"
+            >
               Engiunity
             </Link>
+          </div>
+          <div className="flex gap-4 absolute left-1/2 transform -translate-x-1/2 ">
+            {Object.entries(routes.pages.landingPage).map(([key, value]) => (
+              <Link key={key} href={value.value} className="text-sm ">
+                {value.title}
+              </Link>
+            ))}
           </div>
           <div className="flex gap-2">
             {!isAuthenticated ? (
               <>
+                <Select defaultValue="Vietnamese">
+                  <SelectTrigger className="w-[100px] border-none shadow-none">
+                    <SelectValue placeholder="Select a language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Language</SelectLabel>
+                      <SelectItem value="Vietnamese">
+                        <span className="mr-2">🇻🇳</span> VIE
+                      </SelectItem>
+                      <SelectItem value="English">
+                        <span className="mr-2">🇬🇧</span> ENG
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
                 <Link href="/log-in">
-                  <Button variant="ghost">Log In</Button>
-                </Link>
-                <Link href="/sign-up">
-                  <Button>Get Started</Button>
+                  <Button>Bắt đầu</Button>
                 </Link>
               </>
             ) : (
@@ -70,7 +103,7 @@ const Header = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
-            <DropdownMenu>
+            {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon">
                   <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -89,7 +122,7 @@ const Header = () => {
                   System
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu> */}
           </div>
         </div>
       </div>
