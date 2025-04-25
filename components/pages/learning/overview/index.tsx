@@ -1,16 +1,14 @@
 import React from "react";
 import OverviewSkills from "./OverviewSkills";
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Overview = () => {
   return (
     <div className="grid grid-cols-3 gap-4">
-      <div className="col-span-2 p-4 rounded">
+      <div className="col-span-2">
         <OverviewSkills />
       </div>
-      <div className="col-span-1 p-4 rounded">
-        <Skeleton className="w-full h-[250px]"/>
-      </div>
+      <Skeleton className="w-full h-[250px] col-span-1 " />
     </div>
   );
 };

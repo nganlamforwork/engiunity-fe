@@ -50,6 +50,8 @@ body {
     --palette-pink-foreground: 326 77% 33%;
     --palette-orange: 24 81% 88%;
     --palette-orange-foreground: 3 71% 27%;
+
+    --brand-accent: 204 94% 94%;
   }
 
   .dark {
@@ -111,5 +113,3 @@ body {
   size: A4;
   margin: 0.6cm;
 }
-
-

@@ -54,6 +54,11 @@ export default {
             foreground: "hsl(var(--palette-orange-foreground))",
           },
         },
+        brand: {
+          accent: {
+            DEFAULT: "hsl(var(--brand-accent))",
+          },
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
