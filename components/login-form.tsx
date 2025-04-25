@@ -78,14 +78,11 @@ export function LoginForm({
           priority
         />
         <div className="absolute top-4 left-4">
-          <Link href="/">
-            <Image
-              src="/placeholder-logo.webp" // Replace with your logo path
-              alt="Logo"
-              width={100}
-              height={60}
-              priority
-            />
+          <Link
+            href="/"
+            className="font-black text-[20px] text-primary hover:underline"
+          >
+            Engiunity
           </Link>
         </div>
       </div>
@@ -93,15 +90,16 @@ export function LoginForm({
       {/* Right column with signup form */}
       <div className="mx-6 flex  flex-col justify-center">
         <CardHeader>
-          <CardTitle className="text-2xl">Log In</CardTitle>
-          <CardDescription>Enter your email below to continue</CardDescription>
+          <CardTitle className="text-2xl">Đăng nhập</CardTitle>
+          <CardDescription>
+            Nhập những thông tin cá nhân bên dưới để đăng nhập.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-6">
                 <FormField
-                  control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
@@ -118,7 +116,7 @@ export function LoginForm({
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>Mật khẩu</FormLabel>
                       <FormControl>
                         <Input placeholder="" {...field} type="password" />
                       </FormControl>
@@ -127,16 +125,19 @@ export function LoginForm({
                   )}
                 />
                 <Button type="submit" className="w-full">
-                  Log In
+                  Đăng nhập
                 </Button>
                 <Button variant="outline" className="w-full">
-                  Log in with Google
+                  Đăng nhập với Google
                 </Button>
               </div>
               <div className="mt-4 text-center text-sm">
-                Don't have an account?{" "}
-                <Link href="/sign-up" className="underline underline-offset-4">
-                  Sign up
+                Chưa có tài khoản?{" "}
+                <Link
+                  href="/sign-up"
+                  className="font-bold  underline underline-offset-4"
+                >
+                  Đăng ký
                 </Link>
               </div>
             </form>

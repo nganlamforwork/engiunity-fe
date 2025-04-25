@@ -76,14 +76,11 @@ export function SignupForm({
           priority
         />
         <div className="absolute top-4 left-4">
-          <Link href="/">
-            <Image
-              src="/placeholder-logo.webp" // Replace with your logo path
-              alt="Logo"
-              width={100}
-              height={60}
-              priority
-            />
+          <Link
+            href="/"
+            className="font-black text-[20px] text-primary hover:underline"
+          >
+            Engiunity
           </Link>
         </div>
       </div>
@@ -91,30 +88,28 @@ export function SignupForm({
       {/* Right column with signup form */}
       <div className="mx-6 flex  flex-col justify-center">
         <CardHeader>
-          <CardTitle className="text-2xl">Create an account</CardTitle>
+          <CardTitle className="text-2xl">Đăng ký</CardTitle>
           <CardDescription>
-            Enter your email below to create your account
+            Nhập những thông tin cá nhân bên dưới để đăng ký.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-6">
-                <div className="grid grid-cols-2  gap-6">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Họ và tên</FormLabel>
+                      <FormControl>
+                        <Input placeholder="" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}
@@ -134,7 +129,7 @@ export function SignupForm({
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>Mật khẩu</FormLabel>
                       <FormControl>
                         <Input placeholder="" {...field} type="password" />
                       </FormControl>
@@ -147,7 +142,7 @@ export function SignupForm({
                   name="cfpassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Confirm Password</FormLabel>
+                      <FormLabel>Nhập lại mật khẩu</FormLabel>
                       <FormControl>
                         <Input placeholder="" {...field} type="password" />
                       </FormControl>
@@ -156,16 +151,19 @@ export function SignupForm({
                   )}
                 />
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Signing up..." : "Sign up"}
+                  {isLoading ? "Đăng ký.." : "Đăng ký"}
                 </Button>
                 <Button variant="outline" className="w-full">
-                  Sign up with Google
+                  Đăng ký với Google
                 </Button>
               </div>
               <div className="mt-4 text-center text-sm">
-                Already have an account?{" "}
-                <Link href="/log-in" className="underline underline-offset-4">
-                  Log In
+                Đã có tài khoản?{" "}
+                <Link
+                  href="/log-in"
+                  className="font-bold underline underline-offset-4"
+                >
+                  Đăng nhập
                 </Link>
               </div>
             </form>

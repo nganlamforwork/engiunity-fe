@@ -1,8 +1,6 @@
 "use client";
-
 import Link from "next/link";
-import React from "react";
-import { Bell, Moon, MoonIcon, Sun, User } from "lucide-react";
+import { Bell, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,8 +21,8 @@ import {
 import { logout } from "@/store/slice/authSlice";
 import { RootState, useAppDispatch, useAppSelector } from "@/store";
 import { useRouter } from "next/navigation";
-import { routes } from "@/utils/routes";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 const Header = () => {
   const { setTheme } = useTheme();
@@ -39,24 +37,10 @@ const Header = () => {
     router.push("/");
   };
   return (
-    <div className="shadow-sm w-full sticky top-0 bg-white dark:bg-gray-900 z-[9]">
-      <div className="w-full mx-auto max-w-7xl py-2  flex items-center justify-between">
-        <div className="flex items-center justify-between flex-1 gap-9 relative">
-          <div>
-            <Link
-              href="/"
-              className="font-black text-[20px] text-primary hover:underline"
-            >
-              Engiunity
-            </Link>
-          </div>
-          <div className="flex gap-4 absolute left-1/2 transform -translate-x-1/2 ">
-            {Object.entries(routes.pages.landingPage).map(([key, value]) => (
-              <Link key={key} href={value.value} className="text-sm ">
-                {value.title}
-              </Link>
-            ))}
-          </div>
+    <div className="w-full sticky top-0 bg-white dark:bg-gray-900 z-[9] border-b">
+      <div className="w-full mx-auto max-w-7xl py-2 px-4">
+        <div className="flex items-center justify-between relative">
+          <SidebarTrigger />
           <div className="flex gap-1">
             <Select defaultValue="Vietnamese">
               <SelectTrigger className="w-[100px] border-none shadow-none">

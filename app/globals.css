@@ -41,6 +41,15 @@ body {
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --palette-green: 108 50% 92%;
+    --palette-green-foreground: 144 100% 13%;
+    --palette-blue: 209 95% 92%;
+    --palette-blue-foreground: 210 90% 32%;
+    --palette-pink: 326 86% 94%;
+    --palette-pink-foreground: 326 77% 33%;
+    --palette-orange: 24 81% 88%;
+    --palette-orange-foreground: 3 71% 27%;
   }
 
   .dark {
@@ -102,3 +111,5 @@ body {
   size: A4;
   margin: 0.6cm;
 }
+
+
