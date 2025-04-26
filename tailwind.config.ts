@@ -57,6 +57,15 @@ export default {
         brand: {
           accent: {
             DEFAULT: "hsl(var(--brand-accent))",
+            foreground: "hsl(var(--brand-accent-foreground))",
+          },
+          primary: {
+            DEFAULT: "hsl(var(--brand-primary))",
+            foreground: "hsl(var(--brand-primary-foreground))",
+          },
+          secondary: {
+            DEFAULT: "hsl(var(--brand-secondary))",
+            foreground: "hsl(var(--brand-secondary-foreground))",
           },
         },
         destructive: {

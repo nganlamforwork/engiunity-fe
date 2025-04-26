@@ -12,7 +12,7 @@ interface HeaderSkillProps {
 export default function HeaderSkill({ title }: HeaderSkillProps) {
   return (
     <div className="relative flex py-4 px-8  w-full items-center rounded-lg bg-brand-accent text-palette-blue-foreground  md:rounded-card ">
-      <div className="text-3xl font-extrabold  text-palette-blue-foreground">
+      <div className="text-3xl font-extrabold  text-brand-accent-foreground">
         {title}
       </div>
       <Image

@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -14,7 +10,7 @@ body {
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
+    --primary: 200 98% 39%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -51,7 +47,12 @@ body {
     --palette-orange: 24 81% 88%;
     --palette-orange-foreground: 3 71% 27%;
 
+    --brand-primary: 200 98% 39%;
+    --brand-primary-foreground: 210 40% 98%;
+    --brand-secondary: 198 93% 60%;
+    --brand-secondary-foreground: 210 40% 98%;
     --brand-accent: 204 94% 94%;
+    --brand-accent-foreground: 200 98% 39%;
   }
 
   .dark {
@@ -97,19 +98,4 @@ body {
   body {
     @apply bg-background text-foreground;
   }
-}
-
-@media print {
-  #resumePreviewContent {
-    zoom: 1 !important;
-    padding: 0;
-  }
-}
-#resumePreviewContent {
-  font-family: Geist;
-}
-
-@page {
-  size: A4;
-  margin: 0.6cm;
 }

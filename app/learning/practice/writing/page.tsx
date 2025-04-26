@@ -3,6 +3,8 @@ import { Metadata } from "next";
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs } from "@/components/pages/learning/Tabs";
+import LessonTab from "@/components/pages/learning/practice/writing/LessonTab";
+import ExerciseTab from "@/components/pages/learning/practice/writing/ExerciseTab";
 
 export const metadata: Metadata = {
   title: "Writing",
@@ -26,11 +28,11 @@ const tabItems = [
   {
     label: "Bài học",
     value: "lesson",
-    content: <div>Nội dung bài học ở đây</div>,
+    content: <LessonTab />,
   },
   {
     label: "Bài tập",
     value: "exercise",
-    content: <div>Nội dung bài tập ở đây</div>,
+    content: <ExerciseTab />,
   },
 ];

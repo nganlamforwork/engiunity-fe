@@ -7,8 +7,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/context/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 
-import { Provider, useSelector } from "react-redux";
-import { persistor, RootState, store, useAppDispatch } from "@/store";
+import { Provider } from "react-redux";
+import { persistor, store, useAppDispatch } from "@/store";
 import { useEffect } from "react";
 import { initializeAuth, logout } from "@/store/slice/authSlice";
 import { PersistGate } from "redux-persist/integration/react";
