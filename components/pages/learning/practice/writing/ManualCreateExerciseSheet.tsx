@@ -37,6 +37,7 @@ import {
   CreateExerciseManuallyValues,
 } from "@/form-schemas/ExerciseSchema";
 import { toast } from "@/hooks/use-toast";
+import TextEditor from "@/components/customized/editor/text-editor";
 
 export function ManuallyCreateExerciseSheet() {
   const [open, setOpen] = useState(false);
@@ -194,10 +195,9 @@ export function ManuallyCreateExerciseSheet() {
                 <FormItem>
                   <FormLabel className="flex items-center">Mô tả</FormLabel>
                   <FormControl>
-                    <textarea
-                      className="flex min-h-[200px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      placeholder="Eg: The most important aim of science should be to improve people's lives...."
-                      {...field}
+                    <TextEditor
+                      onChange={field.onChange} // Cập nhật form mỗi lần editor thay đổi
+                      value={field.value} // Đổ value từ form vào editor
                     />
                   </FormControl>
                   <FormMessage />
