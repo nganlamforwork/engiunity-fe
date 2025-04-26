@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ListFilter, Sparkles } from "lucide-react";
 import ExerciseCard from "../../ExerciseCard";
 import { IExerciseItem } from "@/types/IExercise";
+import { CreateExerciseAIDialog } from "./CreateExerciseAIDialog";
 
 const ExerciseTab = () => {
   return (
@@ -19,9 +20,8 @@ const ExerciseTab = () => {
         </div>
         <div className="flex gap-2">
           <Button variant="secondary">Tự thêm bài tập</Button>
-          <Button variant="brandAccent">
-            <Sparkles /> Bài tập mới
-          </Button>
+
+          <CreateExerciseAIDialog />
         </div>
       </div>
 
