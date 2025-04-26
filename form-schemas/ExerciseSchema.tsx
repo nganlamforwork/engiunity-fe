@@ -14,3 +14,26 @@ export const createExerciseAISchema = z.object({
 });
 
 export type CreateExerciseAIValues = z.infer<typeof createExerciseAISchema>;
+
+export const createExerciseManuallySchema = z.object({
+  part: z
+    .string({ required_error: "Vui lòng chọn phần bài thi." })
+    .nonempty("Vui lòng chọn phần bài thi."),
+  exerciseType: z
+    .string({ required_error: "Vui lòng chọn dạng bài." })
+    .optional(),
+  title: z.string().min(10, {
+    message: "Tiêu đề phải có ít nhất 10 ký tự",
+  }),
+  content: z
+    .string({
+      required_error: "Vui lòng nhập nội dung bài tập",
+    })
+    .min(10, {
+      message: "Nội dung phải có ít nhất 10 ký tự",
+    }),
+});
+
+export type CreateExerciseManuallyValues = z.infer<
+  typeof createExerciseManuallySchema
+>;

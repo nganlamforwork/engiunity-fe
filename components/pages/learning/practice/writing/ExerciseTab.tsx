@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { ListFilter, Sparkles } from "lucide-react";
+import { ListFilter } from "lucide-react";
 import ExerciseCard from "../../ExerciseCard";
 import { IExerciseItem } from "@/types/IExercise";
 import { CreateExerciseAIDialog } from "./CreateExerciseAIDialog";
+import { ManuallyCreateExerciseSheet } from "./ManualCreateExerciseSheet";
 
 const ExerciseTab = () => {
   return (
@@ -19,7 +20,7 @@ const ExerciseTab = () => {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="secondary">Tự thêm bài tập</Button>
+          <ManuallyCreateExerciseSheet />
 
           <CreateExerciseAIDialog />
         </div>
@@ -47,7 +48,6 @@ const exerciseData: IExerciseItem[] = [
     status: "not-started",
     score: 0,
     tags: ["Data Analysis", "Geography", "Demographics"],
-    topics: [],
     type: "system-uploaded",
   },
   {
@@ -59,7 +59,6 @@ const exerciseData: IExerciseItem[] = [
     status: "in-progress",
     score: 45,
     tags: ["Climate", "Environment", "Research"],
-    topics: [],
     type: "user-uploaded",
   },
   {
@@ -71,7 +70,6 @@ const exerciseData: IExerciseItem[] = [
     status: "completed",
     score: 92,
     tags: ["Economics", "Asia", "Development"],
-    topics: [],
     type: "ai-generated",
   },
 ];
