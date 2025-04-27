@@ -58,6 +58,9 @@ export const routes = {
         },
         writing: {
           value: "/learning/practice/writing",
+          exercises: {
+            value: "/learning/practice/writing/exercises",
+          },
         },
       },
     },

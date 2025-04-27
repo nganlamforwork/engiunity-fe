@@ -1,39 +1,51 @@
 "use client";
 import { Card } from "@/components/ui/card";
-import { IExerciseItem } from "@/types/IExercise";
+import {
+  ECreationSource,
+  EStatus,
+  IExerciseSummaryItem,
+} from "@/types/WritingExercise";
 import Link from "next/link";
 import Image from "next/image";
 import { CircularProgress } from "@/components/customized/progress/progress-09";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { routes } from "@/utils/routes";
 
 interface ExerciseCardProps {
-  data: IExerciseItem;
+  data: IExerciseSummaryItem;
   className?: string;
 }
+
 const ExerciseCard = ({ data, className }: ExerciseCardProps) => {
   const typeConfig = {
-    "ai-generated": {
+    [ECreationSource.AI_GENERATED]: {
       icon: <Sparkles size={16} />,
       color: "text-brand-primary",
     },
-    "user-uploaded": {
+    [ECreationSource.USER_CREATED]: {
       icon: <User size={16} />,
       color: "",
     },
-    "system-uploaded": {
+    [ECreationSource.SYSTEM_UPLOADED]: {
       icon: null,
       color: "",
     },
   };
+
   return (
-    <Link href={data.url || "/"}>
+    <Link
+      href={
+        routes.pages.learning.practice.writing.exercises.value + `/${data.id}`
+      }
+    >
       <Card className="hover:shadow-lg cursor-pointer overflow-hidden shadow-none transition-all ">
         <div className="flex flex-col sm:flex-row">
           <Image
             src={
               data.thumbnail ||
+              data.image ||
               "/landscape-placeholder.svg?height=200&width=200"
             }
             alt={data.title}
@@ -43,23 +55,41 @@ const ExerciseCard = ({ data, className }: ExerciseCardProps) => {
           <div className="w-full p-4 flex items-center gap-4">
             <div className="w-full h-full">
               <div className="flex flex-wrap gap-2 mb-2">
-                {data.type != "system-uploaded" && (
+                {data.creationSource !== ECreationSource.SYSTEM_UPLOADED && (
                   <div
                     className={cn(
                       "flex items-center",
-                      typeConfig[data.type].color || ""
+                      typeConfig[data.creationSource].color || ""
                     )}
                   >
-                    <span className="mr-1">{typeConfig[data.type].icon}</span>
+                    <span className="mr-1">
+                      {typeConfig[data.creationSource].icon}
+                    </span>
                   </div>
                 )}
 
-                {data.tags.map((tag, index) => (
+                <Badge variant="secondary" className="text-xs">
+                  {data.part}
+                </Badge>
+                {data.exerciseType && (
+                  <Badge variant="secondary" className="text-xs">
+                    {data.exerciseType}
+                  </Badge>
+                )}
+
+                {data.difficulty && (
+                  <Badge variant="secondary" className="text-xs">
+                    {data.difficulty}
+                  </Badge>
+                )}
+
+                {/* {data.tags && data.tags.map((tag, index) => (
                   <Badge key={index} variant="secondary" className="text-xs">
                     {tag}
                   </Badge>
-                ))}
+                ))} */}
               </div>
+
               <h3 className="text-xl font-bold mb-2 line-clamp-2">
                 {data.title}
               </h3>
@@ -67,14 +97,39 @@ const ExerciseCard = ({ data, className }: ExerciseCardProps) => {
                 {data.description}
               </p>
             </div>
+
             <div>
               <CircularProgress
-                value={70}
+                value={
+                  data.status === EStatus.NOT_STARTED
+                    ? 0
+                    : data.status === EStatus.IN_PROGRESS
+                    ? 50
+                    : 100
+                }
                 size={120}
                 strokeWidth={12}
                 showLabel
                 labelClassName="text-md font-bold"
-                renderLabel={(progress) => `${progress}%`}
+                renderLabel={() => {
+                  if (data.status === EStatus.NOT_STARTED)
+                    return (
+                      <span className="text-center">
+                        Chưa
+                        <br />
+                        làm
+                      </span>
+                    );
+                  if (data.status === EStatus.IN_PROGRESS)
+                    return (
+                      <span className="text-center">
+                        Đang
+                        <br />
+                        làm
+                      </span>
+                    );
+                  return `${data.score || 0}`;
+                }}
               />
             </div>
           </div>

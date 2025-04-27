@@ -1,11 +1,19 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { ListFilter } from "lucide-react";
+import { ListFilter, Loader2 } from "lucide-react";
 import ExerciseCard from "../../ExerciseCard";
-import { IExerciseItem } from "@/types/IExercise";
 import { CreateExerciseAIDialog } from "./CreateExerciseAIDialog";
 import { ManuallyCreateExerciseSheet } from "./ManualCreateExerciseSheet";
+import { useGetAllWritingExercisesQuery } from "@/store/api/writingExercisesApi";
 
 const ExerciseTab = () => {
+  const {
+    data: exercises,
+    isLoading,
+    isError,
+  } = useGetAllWritingExercisesQuery();
+
   return (
     <div className="mt-4">
       {/* Header & Buttons */}
@@ -28,48 +36,22 @@ const ExerciseTab = () => {
 
       {/* Exercise List */}
       <div className="mt-4 flex flex-col gap-4">
-        {exerciseData.map((exercise) => (
-          <ExerciseCard key={exercise.id} data={exercise} />
-        ))}
+        {isLoading ? (
+          <div className="flex justify-center items-center h-40">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : isError ? (
+          <div className="text-center text-red-500">
+            Đã xảy ra lỗi khi tải bài tập.
+          </div>
+        ) : (
+          exercises?.map((exercise) => (
+            <ExerciseCard key={exercise.id} data={exercise} />
+          ))
+        )}
       </div>
     </div>
   );
 };
 
 export default ExerciseTab;
-
-const exerciseData: IExerciseItem[] = [
-  {
-    id: "1",
-    thumbnail: "/landscape-placeholder.svg?height=200&width=200",
-    title: "Urban Population Trends in Four Asian Countries (1970-2040)",
-    description:
-      "A line graph showing the percentage of people living in cities across four Asian countries from 1970 to 2020, with future projections for 2030 and 2040.",
-    status: "not-started",
-    score: 0,
-    tags: ["Data Analysis", "Geography", "Demographics"],
-    type: "system-uploaded",
-  },
-  {
-    id: "2",
-    thumbnail: "/landscape-placeholder.svg?height=200&width=200",
-    title: "Global Warming Impact Assessment",
-    description:
-      "Analyze the effects of climate change on different regions and propose sustainable solutions.",
-    status: "in-progress",
-    score: 45,
-    tags: ["Climate", "Environment", "Research"],
-    type: "user-uploaded",
-  },
-  {
-    id: "3",
-    thumbnail: "/landscape-placeholder.svg?height=200&width=200",
-    title: "Economic Growth Patterns in Southeast Asia",
-    description:
-      "Explore the economic development trends across Southeast Asian countries from 2000 to 2022.",
-    status: "completed",
-    score: 92,
-    tags: ["Economics", "Asia", "Development"],
-    type: "ai-generated",
-  },
-];

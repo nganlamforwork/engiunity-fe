@@ -7,6 +7,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { usersApi } from "./api/usersApi";
+import { writingExercisesApi } from "./api/writingExercisesApi";
 
 const persistConfig = {
   key: "root",
@@ -17,6 +18,7 @@ const combinedReducers = combineReducers({
   auth: authSlice.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [usersApi.reducerPath]: usersApi.reducer,
+  [writingExercisesApi.reducerPath]: writingExercisesApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, combinedReducers);
@@ -28,7 +30,8 @@ export const store = configureStore({
       serializableCheck: false,
     })
       .concat(authApi.middleware)
-      .concat(usersApi.middleware),
+      .concat(usersApi.middleware)
+      .concat(writingExercisesApi.middleware),
 });
 export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>;

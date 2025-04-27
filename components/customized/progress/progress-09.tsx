@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 interface CircularProgressProps {
   value: number;
-  renderLabel?: (progress: number) => number | string;
+  renderLabel?: (progress: number) => number | string | React.JSX.Element;
   size?: number;
   strokeWidth?: number;
   circleStrokeWidth?: number;

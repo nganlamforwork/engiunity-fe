@@ -1,3 +1,4 @@
+import { EWritingExerciseType, EWritingPart } from "@/types/WritingExercise";
 import { z } from "zod";
 
 export const createExerciseAISchema = z.object({
@@ -16,12 +17,15 @@ export const createExerciseAISchema = z.object({
 export type CreateExerciseAIValues = z.infer<typeof createExerciseAISchema>;
 
 export const createExerciseManuallySchema = z.object({
-  part: z
-    .string({ required_error: "Vui lòng chọn phần bài thi." })
-    .nonempty("Vui lòng chọn phần bài thi."),
+  part: z.nativeEnum(EWritingPart).refine((value) => value !== undefined, {
+    message: "Vui lòng chọn phần bài thi.",
+  }),
   exerciseType: z
-    .string({ required_error: "Vui lòng chọn dạng bài." })
-    .optional(),
+    .nativeEnum(EWritingExerciseType)
+    .optional()
+    .refine((value) => value !== undefined, {
+      message: "Vui lòng chọn dạng bài.",
+    }),
   title: z.string().min(10, {
     message: "Tiêu đề phải có ít nhất 10 ký tự",
   }),

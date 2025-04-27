@@ -38,6 +38,12 @@ import {
 } from "@/form-schemas/ExerciseSchema";
 import { toast } from "@/hooks/use-toast";
 import TextEditor from "@/components/customized/editor/text-editor";
+import {
+  ECreationSource,
+  EWritingExerciseType,
+  EWritingPart,
+} from "@/types/WritingExercise";
+import { useCreateWritingExerciseManuallyMutation } from "@/store/api/writingExercisesApi";
 
 export function ManuallyCreateExerciseSheet() {
   const [open, setOpen] = useState(false);
@@ -46,8 +52,8 @@ export function ManuallyCreateExerciseSheet() {
   const form = useForm<CreateExerciseManuallyValues>({
     resolver: zodResolver(createExerciseManuallySchema),
     defaultValues: {
-      part: "",
-      exerciseType: "",
+      part: undefined,
+      exerciseType: undefined,
       title: "",
       content: "",
     },
@@ -61,41 +67,66 @@ export function ManuallyCreateExerciseSheet() {
     }
   };
 
+  const [
+    createWritingExerciseManually,
+    { isLoading, isSuccess, isError, error },
+  ] = useCreateWritingExerciseManuallyMutation();
   const onSubmit = async (values: CreateExerciseManuallyValues) => {
     try {
-      const submitData = new FormData();
-      submitData.append("part", values.part);
-      submitData.append("exerciseType", values.exerciseType || "");
-      submitData.append("title", values.title || "");
-      submitData.append("content", values.content || "");
-
-      if (imageFile) {
-        submitData.append("image", imageFile);
-      }
-
-      console.log("Form submitted with data:", Object.fromEntries(submitData));
+      const words = values.content
+        .replace(/<[^>]*>/g, "")
+        .split(/\s+/)
+        .filter((word) => word.length > 0);
+      const description = words.slice(0, 100).join(" ");
+      await createWritingExerciseManually({
+        data: {
+          ...values,
+          description,
+          creationSource: ECreationSource.USER_CREATED,
+        },
+        image: imageFile,
+      });
 
       form.reset();
       setImageFile(null);
       setOpen(false);
       toast({
         variant: "success",
-        title: "Success",
-        description: "Exercise created successfully!",
+        title: "Thành công",
+        description: "Thêm bài tập mới thành công!",
         duration: 1000,
       });
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("Có lỗi xảy ra khi tạo bài tập. Vui lòng thử lại.");
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "There are something wrong when creating exercise!",
+        title: "Lỗi",
+        description: "Có lỗi xảy ra khi tạo bài tập. Vui lòng thử lại.",
         duration: 1000,
       });
     }
   };
 
+  if (isSuccess) {
+    toast({
+      variant: "success",
+      title: "Thành công",
+      description: "Thêm bài tập mới thành công!",
+      duration: 1000,
+    });
+  }
+
+  if (isError && error) {
+    const errorMessage =
+      (error as { message?: string })?.message ||
+      "Có lỗi xảy ra khi tạo bài tập. Vui lòng thử lại.";
+    toast({
+      variant: "destructive",
+      title: "Lỗi",
+      description: errorMessage,
+      duration: 1000,
+    });
+  }
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
@@ -132,8 +163,11 @@ export function ManuallyCreateExerciseSheet() {
                         <SelectValue placeholder="Chọn phần" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="part1">Part 1</SelectItem>
-                        <SelectItem value="part2">Part 2</SelectItem>
+                        {Object.values(EWritingPart).map((part) => (
+                          <SelectItem key={part} value={part}>
+                            {part}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </FormControl>
@@ -142,7 +176,7 @@ export function ManuallyCreateExerciseSheet() {
               )}
             />
 
-            {selectedPart === "part1" && (
+            {selectedPart === EWritingPart.PART_1 && (
               <FormField
                 control={form.control}
                 name="exerciseType"
@@ -160,9 +194,11 @@ export function ManuallyCreateExerciseSheet() {
                           <SelectValue placeholder="Chọn dạng bài" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="type1">Dạng 1</SelectItem>
-                          <SelectItem value="type2">Dạng 2</SelectItem>
-                          <SelectItem value="type3">Dạng 3</SelectItem>
+                          {Object.values(EWritingExerciseType).map((part) => (
+                            <SelectItem key={part} value={part}>
+                              {part}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -195,10 +231,7 @@ export function ManuallyCreateExerciseSheet() {
                 <FormItem>
                   <FormLabel className="flex items-center">Mô tả</FormLabel>
                   <FormControl>
-                    <TextEditor
-                      onChange={field.onChange} // Cập nhật form mỗi lần editor thay đổi
-                      value={field.value} // Đổ value từ form vào editor
-                    />
+                    <TextEditor onChange={field.onChange} value={field.value} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

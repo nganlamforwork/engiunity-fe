@@ -34,6 +34,11 @@ import {
   createExerciseAISchema,
   CreateExerciseAIValues,
 } from "@/form-schemas/ExerciseSchema";
+import {
+  EDifficulty,
+  EWritingExerciseType,
+  EWritingPart,
+} from "@/types/WritingExercise";
 
 export function CreateExerciseAIDialog() {
   const [open, setOpen] = useState(false);
@@ -96,12 +101,12 @@ export function CreateExerciseAIDialog() {
                 <FormItem>
                   <FormLabel>Phần</FormLabel>
                   <Select
-                  onValueChange={(value) => {
-                    field.onChange(value);
-                    if (value !== "part1") {
-                      form.setValue("exerciseType", "");
-                    }
-                  }}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      if (value !== "part1") {
+                        form.setValue("exerciseType", "");
+                      }
+                    }}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -110,8 +115,11 @@ export function CreateExerciseAIDialog() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="part1">Part 1</SelectItem>
-                      <SelectItem value="part2">Part 2</SelectItem>
+                      {Object.values(EWritingPart).map((part) => (
+                        <SelectItem key={part} value={part}>
+                          {part}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -119,34 +127,35 @@ export function CreateExerciseAIDialog() {
               )}
             />
 
-            {part === "part1" &&<FormField
-              control={form.control}
-              name="exerciseType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Dạng bài</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn dạng bài" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="line-chart">Line Chart</SelectItem>
-                      <SelectItem value="bar-chart">Bar Chart</SelectItem>
-                      <SelectItem value="pie-chart">Pie Chart</SelectItem>
-                      <SelectItem value="process">Process</SelectItem>
-                      <SelectItem value="map">Map</SelectItem>
-                      <SelectItem value="table">Table</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />}
+            {part === EWritingPart.PART_1 && (
+              <FormField
+                control={form.control}
+                name="exerciseType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Dạng bài</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn dạng bài" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Object.values(EWritingExerciseType).map((part) => (
+                          <SelectItem key={part} value={part}>
+                            {part}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
@@ -179,9 +188,11 @@ export function CreateExerciseAIDialog() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="easy">Easy</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="hard">Hard</SelectItem>
+                      {Object.values(EDifficulty).map((e) => (
+                        <SelectItem key={e} value={e}>
+                          {e}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
