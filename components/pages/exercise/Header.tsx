@@ -1,24 +1,27 @@
-"use client"
+"use client";
 
 import React from "react";
 
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-
-const Header = () => {
+import { EWritingPart } from "@/types/WritingExercise";
+interface HeaderProps {
+  part?: EWritingPart | null;
+}
+const Header = ({ part }: HeaderProps) => {
   const router = useRouter();
   return (
     <header className="border-b bg-white sticky top-0 z-10">
       <div className="container mx-auto flex items-center justify-between h-16">
         <div className="flex items-center">
-          <Button variant="ghost" onClick={() => router.push("/")}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft size={16} /> Thoát
           </Button>
         </div>
 
         <div className="text-center">
-          <h1 className="font-semibold">WRITING PART 1</h1>
+          {part && <h1 className="font-semibold uppercase">WRITING {part}</h1>}
         </div>
         <Button>
           Nộp bài <ArrowRight size={16} />

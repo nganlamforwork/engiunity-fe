@@ -35,11 +35,7 @@ const ExerciseCard = ({ data, className }: ExerciseCardProps) => {
   };
 
   return (
-    <Link
-      href={
-        routes.pages.learning.practice.writing.exercises.value + `/${data.id}`
-      }
-    >
+    <Link href={routes.pages.exercises.writing.value + `/${data.id}`}>
       <Card className="hover:shadow-lg cursor-pointer overflow-hidden shadow-none transition-all ">
         <div className="flex flex-col sm:flex-row">
           <Image
