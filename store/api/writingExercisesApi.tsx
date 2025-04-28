@@ -3,6 +3,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import axiosBaseQuery from "./customBaseQuery";
 import {
   CreateExerciseDto,
+  CreateExerciseResponseDto,
   IExerciseItem,
   IExerciseSummaryItem,
 } from "@/types/WritingExercise";
@@ -51,6 +52,19 @@ export const writingExercisesApi = createApi({
       }),
       providesTags: ["Writing Exercises"],
     }),
+    createWritingExerciseResponse: builder.mutation<
+      any,
+      { data: CreateExerciseResponseDto; id: number }
+    >({
+      query: ({ data, id }) => {
+        return {
+          url: `${baseUrl}/${id}/responses`,
+          method: "POST",
+          data: data,
+        };
+      },
+      invalidatesTags: ["Writing Exercises"],
+    }),
   }),
 });
 
@@ -58,4 +72,5 @@ export const {
   useCreateWritingExerciseManuallyMutation,
   useGetAllWritingExercisesQuery,
   useGetWritingExerciseQuery,
+  useCreateWritingExerciseResponseMutation,
 } = writingExercisesApi;

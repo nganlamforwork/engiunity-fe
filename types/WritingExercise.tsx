@@ -38,6 +38,9 @@ export interface CreateExerciseDto {
   content: string;
   image?: string;
 }
+export interface CreateExerciseResponseDto {
+  content: string;
+}
 
 export enum EStatus {
   COMPLETED = "Completed",

@@ -3,6 +3,8 @@
 import ExerciseWorkArea from "@/components/pages/exercise/ExerciseWorkArea";
 import Header from "@/components/pages/exercise/Header";
 import { useGetWritingExerciseQuery } from "@/store/api/writingExercisesApi";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 interface TestPageProps {
   id: string;
@@ -13,6 +15,8 @@ function ExerciseWriting({ id }: TestPageProps) {
     isLoading,
     error,
   } = useGetWritingExerciseQuery(parseInt(id, 10));
+
+  const [answer, setAnswer] = useState("");
 
   if (isLoading) {
     return (
@@ -35,8 +39,16 @@ function ExerciseWriting({ id }: TestPageProps) {
   return (
     <div className="h-screen flex flex-col">
       <div className="h-screen flex flex-col">
-        <Header part={exercise.part} />
-        <ExerciseWorkArea exercise={exercise} />
+        <Header
+          part={exercise.part}
+          exerciseId={parseInt(id, 10)}
+          answer={answer}
+        />
+        <ExerciseWorkArea
+          exercise={exercise}
+          answer={answer}
+          setAnswer={setAnswer}
+        />
       </div>
     </div>
   );

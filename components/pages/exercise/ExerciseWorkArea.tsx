@@ -1,17 +1,23 @@
 "use client";
 
 import { IExerciseItem } from "@/types/WritingExercise";
+import { routes } from "@/utils/routes";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface ExerciseWorkAreaProps {
   exercise: IExerciseItem;
+  answer: string;
+  setAnswer: (value: string) => void;
 }
 
-const ExerciseWorkArea = ({ exercise }: ExerciseWorkAreaProps) => {
+const ExerciseWorkArea = ({
+  exercise,
+  answer,
+  setAnswer,
+}: ExerciseWorkAreaProps) => {
   const [leftWidth, setLeftWidth] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
-  const [answer, setAnswer] = useState("");
-
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
     document.body.style.userSelect = "none";
@@ -32,6 +38,7 @@ const ExerciseWorkArea = ({ exercise }: ExerciseWorkAreaProps) => {
   const countWords = (text: string) => {
     return text.trim().split(/\s+/).filter(Boolean).length;
   };
+
   return (
     <div
       className="flex flex-1"
