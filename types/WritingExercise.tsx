@@ -41,6 +41,9 @@ export interface CreateExerciseDto {
 export interface CreateExerciseResponseDto {
   content: string;
 }
+export interface ExerciseResponseNotScoredDto {
+  content: string;
+}
 
 export enum EStatus {
   COMPLETED = "Completed",

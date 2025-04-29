@@ -4,6 +4,7 @@ import axiosBaseQuery from "./customBaseQuery";
 import {
   CreateExerciseDto,
   CreateExerciseResponseDto,
+  ExerciseResponseNotScoredDto,
   IExerciseItem,
   IExerciseSummaryItem,
 } from "@/types/WritingExercise";
@@ -65,6 +66,18 @@ export const writingExercisesApi = createApi({
       },
       invalidatesTags: ["Writing Exercises"],
     }),
+    getWritingExerciseResponseLatestNotScored: builder.query<
+      ExerciseResponseNotScoredDto,
+      number
+    >({
+      query: (id) => {
+        return {
+          url: `${baseUrl}/${id}/responses/latest`,
+          method: "GET",
+        };
+      },
+      providesTags: ["Writing Exercises"],
+    }),
   }),
 });
 
@@ -73,4 +86,5 @@ export const {
   useGetAllWritingExercisesQuery,
   useGetWritingExerciseQuery,
   useCreateWritingExerciseResponseMutation,
+  useGetWritingExerciseResponseLatestNotScoredQuery,
 } = writingExercisesApi;

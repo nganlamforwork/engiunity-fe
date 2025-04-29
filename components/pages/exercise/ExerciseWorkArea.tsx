@@ -1,9 +1,10 @@
 "use client";
 
+import { useGetWritingExerciseResponseLatestNotScoredQuery } from "@/store/api/writingExercisesApi";
 import { IExerciseItem } from "@/types/WritingExercise";
 import { routes } from "@/utils/routes";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ExerciseWorkAreaProps {
   exercise: IExerciseItem;
@@ -16,8 +17,17 @@ const ExerciseWorkArea = ({
   answer,
   setAnswer,
 }: ExerciseWorkAreaProps) => {
+  const { data, error, isLoading } =
+    useGetWritingExerciseResponseLatestNotScoredQuery(parseInt(exercise.id));
   const [leftWidth, setLeftWidth] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    if (data && data.content) {
+      setAnswer(data.content);
+    }
+  }, [data, setAnswer]);
+
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
     document.body.style.userSelect = "none";
@@ -53,7 +63,7 @@ const ExerciseWorkArea = ({
         />
         {exercise.image && (
           <img
-            src={exercise.image} // Dùng link CDN
+            src={exercise.image}
             alt={exercise.title}
             className="w-full mt-4"
           />
@@ -76,6 +86,7 @@ const ExerciseWorkArea = ({
           className="w-full flex-1 p-2 focus:outline-none resize-none"
           placeholder="Bắt đầu viết..."
           rows={10}
+          value={answer}
         />
         <div className="text-gray-500 text-sm mt-2 ">
           {countWords(answer)} từ
