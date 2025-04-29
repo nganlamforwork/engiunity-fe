@@ -39,9 +39,11 @@ export interface CreateExerciseDto {
   image?: string;
 }
 export interface CreateExerciseResponseDto {
+  id?: string;
   content: string;
 }
 export interface ExerciseResponseNotScoredDto {
+  id: string;
   content: string;
 }
 

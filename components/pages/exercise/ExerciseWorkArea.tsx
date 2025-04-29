@@ -11,22 +11,13 @@ interface ExerciseWorkAreaProps {
   answer: string;
   setAnswer: (value: string) => void;
 }
-
 const ExerciseWorkArea = ({
   exercise,
   answer,
   setAnswer,
 }: ExerciseWorkAreaProps) => {
-  const { data, error, isLoading } =
-    useGetWritingExerciseResponseLatestNotScoredQuery(parseInt(exercise.id));
   const [leftWidth, setLeftWidth] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
-
-  useEffect(() => {
-    if (data && data.content) {
-      setAnswer(data.content);
-    }
-  }, [data, setAnswer]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
@@ -55,8 +46,7 @@ const ExerciseWorkArea = ({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
-      {/* Cột Đề bài (Bên trái) */}
-      <div className=" overflow-y-auto p-4" style={{ width: `${leftWidth}%` }}>
+      <div className="overflow-y-auto p-4" style={{ width: `${leftWidth}%` }}>
         <div
           className="prose max-w-none"
           dangerouslySetInnerHTML={{ __html: exercise.content }}
@@ -88,7 +78,7 @@ const ExerciseWorkArea = ({
           rows={10}
           value={answer}
         />
-        <div className="text-gray-500 text-sm mt-2 ">
+        <div className="text-gray-500 text-sm mt-2">
           {countWords(answer)} từ
         </div>
       </div>

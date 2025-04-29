@@ -66,6 +66,19 @@ export const writingExercisesApi = createApi({
       },
       invalidatesTags: ["Writing Exercises"],
     }),
+    submitWritingExerciseResponse: builder.mutation<
+      any,
+      { data: CreateExerciseResponseDto; id: number }
+    >({
+      query: ({ data, id }) => {
+        return {
+          url: `${baseUrl}/${id}/responses/submit`,
+          method: "POST",
+          data: data,
+        };
+      },
+      invalidatesTags: ["Writing Exercises"],
+    }),
     getWritingExerciseResponseLatestNotScored: builder.query<
       ExerciseResponseNotScoredDto,
       number
@@ -86,5 +99,6 @@ export const {
   useGetAllWritingExercisesQuery,
   useGetWritingExerciseQuery,
   useCreateWritingExerciseResponseMutation,
+  useSubmitWritingExerciseResponseMutation,
   useGetWritingExerciseResponseLatestNotScoredQuery,
 } = writingExercisesApi;

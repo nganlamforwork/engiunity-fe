@@ -7,16 +7,17 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { EWritingPart } from "@/types/WritingExercise";
 import { routes } from "@/utils/routes";
-import { useCreateWritingExerciseResponseMutation } from "@/store/api/writingExercisesApi";
+import { useSubmitWritingExerciseResponseMutation } from "@/store/api/writingExercisesApi";
 interface HeaderProps {
   part?: EWritingPart | null;
   exerciseId?: number;
   answer?: string;
+  responseId?: string;
 }
-const Header = ({ part, exerciseId, answer }: HeaderProps) => {
+const Header = ({ part, exerciseId, answer, responseId }: HeaderProps) => {
   const router = useRouter();
-  const [createResponse, { isLoading }] =
-    useCreateWritingExerciseResponseMutation();
+  const [submitResponse, { isLoading }] =
+    useSubmitWritingExerciseResponseMutation();
 
   const handleSubmit = async () => {
     if (!answer?.trim()) {
@@ -30,9 +31,10 @@ const Header = ({ part, exerciseId, answer }: HeaderProps) => {
     }
 
     try {
-      await createResponse({
+      await submitResponse({
         id: exerciseId,
         data: {
+          id: responseId,
           content: answer,
         },
       }).unwrap();
@@ -54,7 +56,11 @@ const Header = ({ part, exerciseId, answer }: HeaderProps) => {
         </div>
 
         <div className="text-center">
-          {part && <h1 className="font-semibold uppercase">WRITING {part}</h1>}
+          {part && (
+            <h1 className="font-semibold uppercase">
+              WRITING {part}
+            </h1>
+          )}
         </div>
         {exerciseId && (
           <Button
