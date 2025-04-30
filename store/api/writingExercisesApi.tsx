@@ -7,6 +7,7 @@ import {
   ExerciseResponseNotScoredDto,
   IExerciseItem,
   IExerciseSummaryItem,
+  ISubmissions,
 } from "@/types/WritingExercise";
 
 const baseUrl = "writing/exercises";
@@ -91,6 +92,14 @@ export const writingExercisesApi = createApi({
       },
       providesTags: ["Writing Exercises"],
     }),
+
+    getAllWritingExerciseResponses: builder.query<ISubmissions, number>({
+      query: (id) => ({
+        url: `${baseUrl}/${id}/responses`,
+        method: "GET",
+      }),
+      providesTags: ["Writing Exercises"],
+    }),
   }),
 });
 
@@ -101,4 +110,5 @@ export const {
   useCreateWritingExerciseResponseMutation,
   useSubmitWritingExerciseResponseMutation,
   useGetWritingExerciseResponseLatestNotScoredQuery,
+  useGetAllWritingExerciseResponsesQuery,
 } = writingExercisesApi;

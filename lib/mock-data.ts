@@ -1,6 +1,6 @@
-import { Submission } from "@/types/WritingExercise";
+import { ScoreDetail } from "@/types/WritingExercise";
 
-export const mockSubmissions: Submission[] = [
+export const mockSubmissions: ScoreDetail[] = [
   {
     id: "1",
     submittedAt: "2023-06-15T14:30:00Z",

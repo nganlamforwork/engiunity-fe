@@ -91,7 +91,7 @@ export interface Correction {
   end_position: number;
 }
 
-export interface CriteriaScore {
+export interface Category {
   score: number;
   feedback: string;
   corrections: Correction[];
@@ -104,13 +104,27 @@ export interface Overview {
   overallImprovementSuggestion: string;
 }
 
-export interface Submission {
+export interface ScoreDetail {
   id: string;
-  submittedAt: string;
+  takenAt: string;
   essay: string;
   overview: Overview;
-  task_response: CriteriaScore;
-  coherence_and_cohesion: CriteriaScore;
-  lexical_resource: CriteriaScore;
-  grammatical_range_and_accuracy: CriteriaScore;
+  task_response: Category;
+  coherence_and_cohesion: Category;
+  lexical_resource: Category;
+  grammatical_range_and_accuracy: Category;
+}
+
+export interface IResponseItem {
+  id: string;
+  content: string;
+  takenAt: string;
+  takeNumber: number;
+  score: number;
+  scoreDetail: ScoreDetail;
+}
+
+export interface ISubmissions {
+  exercise: IExerciseItem;
+  submissions: IResponseItem[];
 }

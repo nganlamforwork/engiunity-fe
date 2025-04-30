@@ -3,10 +3,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ScoreOverview from "./ScoreOverview";
 import EssayWithHighlights from "./EssayWithHighlights";
 import ScoreBreakdown from "./ScoreBreakdown";
-import { Submission } from "@/types/WritingExercise";
+import { IResponseItem } from "@/types/WritingExercise";
 
 interface SubmissionDetailsProps {
-  submission: Submission;
+  submission: IResponseItem;
 }
 
 export default function SubmissionDetails({
@@ -14,7 +14,7 @@ export default function SubmissionDetails({
 }: SubmissionDetailsProps) {
   return (
     <div className="space-y-6">
-      <ScoreOverview overview={submission.overview} />
+      <ScoreOverview overview={submission.scoreDetail.overview} />
 
       <Tabs defaultValue="essay" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
@@ -29,20 +29,25 @@ export default function SubmissionDetails({
             </CardHeader>
             <CardContent>
               <EssayWithHighlights
-                essay={submission.essay}
-                corrections={[
-                  ...submission.task_response.corrections,
-                  ...submission.lexical_resource.corrections,
-                  ...submission.coherence_and_cohesion.corrections,
-                  ...submission.grammatical_range_and_accuracy.corrections,
-                ]}
+                essay={submission.content}
+                taskResponse={submission.scoreDetail.task_response.corrections}
+                lexicalResource={
+                  submission.scoreDetail.lexical_resource.corrections
+                }
+                coherenceAndCohesion={
+                  submission.scoreDetail.coherence_and_cohesion.corrections
+                }
+                grammaticalRangeAndAccuracy={
+                  submission.scoreDetail.grammatical_range_and_accuracy
+                    .corrections
+                }
               />
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="breakdown" className="mt-4">
-          <ScoreBreakdown submission={submission} />
+          <ScoreBreakdown scoreDetail={submission.scoreDetail} />
         </TabsContent>
       </Tabs>
     </div>

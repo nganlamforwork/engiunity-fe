@@ -107,26 +107,26 @@ export function ManuallyCreateExerciseSheet() {
     }
   };
 
-  if (isSuccess) {
-    toast({
-      variant: "success",
-      title: "Thành công",
-      description: "Thêm bài tập mới thành công!",
-      duration: 1000,
-    });
-  }
+  // if (isSuccess) {
+  //   toast({
+  //     variant: "success",
+  //     title: "Thành công",
+  //     description: "Thêm bài tập mới thành công!",
+  //     duration: 1000,
+  //   });
+  // }
 
-  if (isError && error) {
-    const errorMessage =
-      (error as { message?: string })?.message ||
-      "Có lỗi xảy ra khi tạo bài tập. Vui lòng thử lại.";
-    toast({
-      variant: "destructive",
-      title: "Lỗi",
-      description: errorMessage,
-      duration: 1000,
-    });
-  }
+  // if (isError && error) {
+  //   const errorMessage =
+  //     (error as { message?: string })?.message ||
+  //     "Có lỗi xảy ra khi tạo bài tập. Vui lòng thử lại.";
+  //   toast({
+  //     variant: "destructive",
+  //     title: "Lỗi",
+  //     description: errorMessage,
+  //     duration: 1000,
+  //   });
+  // }
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>

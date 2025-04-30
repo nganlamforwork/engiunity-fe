@@ -1,18 +1,28 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { ChevronDown, ChevronUp } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { IExerciseItem } from "@/types/WritingExercise";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface TaskSectionProps {
-  showTask: boolean
-  setShowTask: (show: boolean) => void
+  showTask: boolean;
+  setShowTask: (show: boolean) => void;
+  exercise: IExerciseItem;
 }
 
-export default function TaskSection({ showTask, setShowTask }: TaskSectionProps) {
+export default function TaskSection({
+  showTask,
+  setShowTask,
+  exercise,
+}: TaskSectionProps) {
   return (
     <div className="mb-6">
-      <Button variant="outline" onClick={() => setShowTask(!showTask)} className="mb-2 flex items-center gap-2">
+      <Button
+        variant="outline"
+        onClick={() => setShowTask(!showTask)}
+        className="mb-2 flex items-center gap-2"
+      >
         {showTask ? (
           <>
             <ChevronUp className="h-4 w-4" /> Hide Task
@@ -28,22 +38,22 @@ export default function TaskSection({ showTask, setShowTask }: TaskSectionProps)
         <Card>
           <CardContent className="pt-6">
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Task 1</h3>
-              <p>
-                The diagram shows the consumption of renewable energy in the USA from 1949-2008. Write a 150-word report
-                for a university lecturer identifying the main trends and making comparisons where relevant.
-              </p>
-              <div className="border rounded-md p-4 bg-slate-50">
+              <h3 className="font-semibold text-lg">{exercise.part}</h3>
+              <div
+                className="prose max-w-none"
+                dangerouslySetInnerHTML={{ __html: exercise.content }}
+              />
+              {exercise.image && (
                 <img
-                  src="/placeholder.svg?height=400&width=600"
-                  alt="Renewable Energy Consumption Graph"
-                  className="mx-auto"
+                  src={exercise.image}
+                  alt={exercise.title}
+                  className="mx-auto max-w-[500px]"
                 />
-              </div>
+              )}
             </div>
           </CardContent>
         </Card>
       )}
     </div>
-  )
+  );
 }

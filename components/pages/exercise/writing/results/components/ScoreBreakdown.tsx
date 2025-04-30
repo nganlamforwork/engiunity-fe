@@ -6,43 +6,43 @@ import {
 } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Submission } from "@/types/WritingExercise";
+import { ScoreDetail } from "@/types/WritingExercise";
 
 interface ScoreBreakdownProps {
-  submission: Submission;
+  scoreDetail: ScoreDetail;
 }
 
-export default function ScoreBreakdown({ submission }: ScoreBreakdownProps) {
+export default function ScoreBreakdown({ scoreDetail }: ScoreBreakdownProps) {
   const criteriaItems = [
     {
       id: "task-response",
       title: "Task Response",
-      score: submission.task_response.score,
-      feedback: submission.task_response.feedback,
-      improvementSuggestion: submission.task_response.improvementSuggestion,
+      score: scoreDetail.task_response.score,
+      feedback: scoreDetail.task_response.feedback,
+      improvementSuggestion: scoreDetail.task_response.improvementSuggestion,
     },
     {
       id: "coherence-cohesion",
       title: "Coherence & Cohesion",
-      score: submission.coherence_and_cohesion.score,
-      feedback: submission.coherence_and_cohesion.feedback,
+      score: scoreDetail.coherence_and_cohesion.score,
+      feedback: scoreDetail.coherence_and_cohesion.feedback,
       improvementSuggestion:
-        submission.coherence_and_cohesion.improvementSuggestion,
+        scoreDetail.coherence_and_cohesion.improvementSuggestion,
     },
     {
       id: "lexical-resource",
       title: "Lexical Resource",
-      score: submission.lexical_resource.score,
-      feedback: submission.lexical_resource.feedback,
-      improvementSuggestion: submission.lexical_resource.improvementSuggestion,
+      score: scoreDetail.lexical_resource.score,
+      feedback: scoreDetail.lexical_resource.feedback,
+      improvementSuggestion: scoreDetail.lexical_resource.improvementSuggestion,
     },
     {
       id: "grammar",
       title: "Grammar Range & Accuracy",
-      score: submission.grammatical_range_and_accuracy.score,
-      feedback: submission.grammatical_range_and_accuracy.feedback,
+      score: scoreDetail.grammatical_range_and_accuracy.score,
+      feedback: scoreDetail.grammatical_range_and_accuracy.feedback,
       improvementSuggestion:
-        submission.grammatical_range_and_accuracy.improvementSuggestion,
+        scoreDetail.grammatical_range_and_accuracy.improvementSuggestion,
     },
   ];
 
@@ -60,9 +60,7 @@ export default function ScoreBreakdown({ submission }: ScoreBreakdownProps) {
                       value={(item.score / 9) * 100}
                       className="w-24 h-2"
                     />
-                    <span className="font-semibold">
-                      Band {item.score.toFixed(1)}
-                    </span>
+                    <span className="font-semibold">Band {item.score}</span>
                   </div>
                 </div>
               </AccordionTrigger>

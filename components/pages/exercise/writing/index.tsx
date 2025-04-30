@@ -32,18 +32,27 @@ function ExerciseWriting({ id }: ExerciseWritingProps) {
 
   if (isLoading || isResponseLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <Header />
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-400 border-t-transparent"></div>
+      <div className="h-screen flex flex-col">
+        <div className="h-screen flex flex-col">
+          <Header />
+          <div className="w-full flex-1 items-center justify-center flex flex-col gap-2">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-400 border-t-transparent"></div>
+            <p>Đang tải...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error || !exercise) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <Header />
-        <p>Không tải được đề bài.</p>
+      <div className="h-screen flex flex-col">
+        <div className="h-screen flex flex-col">
+          <Header />
+          <div className="w-full flex-1 items-center justify-center flex flex-col gap-2 text-destructive">
+            Không tải được đề bài. Hãy nhấn reload trang hoặc quay lại sau.
+          </div>
+        </div>
       </div>
     );
   }
