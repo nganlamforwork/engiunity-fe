@@ -1,18 +1,16 @@
 "use client";
-
-import ExerciseWorkArea from "@/components/pages/exercise/ExerciseWorkArea";
+import ExerciseWorkArea from "@/components/pages/exercise/writing/ExerciseWorkArea";
 import Header from "@/components/pages/exercise/Header";
 import {
   useGetWritingExerciseQuery,
   useGetWritingExerciseResponseLatestNotScoredQuery,
 } from "@/store/api/writingExercisesApi";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-interface TestPageProps {
+interface ExerciseWritingProps {
   id: string;
 }
-function ExerciseWriting({ id }: TestPageProps) {
+function ExerciseWriting({ id }: ExerciseWritingProps) {
   const exerciseId = parseInt(id, 10);
   const {
     data: exercise,
@@ -20,11 +18,8 @@ function ExerciseWriting({ id }: TestPageProps) {
     error,
   } = useGetWritingExerciseQuery(exerciseId);
 
-  const {
-    data: latestResponse,
-    isLoading: isResponseLoading,
-    error: responseError,
-  } = useGetWritingExerciseResponseLatestNotScoredQuery(exerciseId);
+  const { data: latestResponse, isLoading: isResponseLoading } =
+    useGetWritingExerciseResponseLatestNotScoredQuery(exerciseId);
 
   const [answer, setAnswer] = useState("");
   const [responseId, setResponseId] = useState<string | undefined>(undefined);

@@ -83,3 +83,34 @@ export enum EWritingPart {
   PART_1 = "Part 1",
   PART_2 = "Part 2",
 }
+
+export interface Correction {
+  error: string;
+  suggestion: string;
+  start_position: number;
+  end_position: number;
+}
+
+export interface CriteriaScore {
+  score: number;
+  feedback: string;
+  corrections: Correction[];
+  improvementSuggestion: string;
+}
+
+export interface Overview {
+  totalScore: number;
+  totalFeedback: string;
+  overallImprovementSuggestion: string;
+}
+
+export interface Submission {
+  id: string;
+  submittedAt: string;
+  essay: string;
+  overview: Overview;
+  task_response: CriteriaScore;
+  coherence_and_cohesion: CriteriaScore;
+  lexical_resource: CriteriaScore;
+  grammatical_range_and_accuracy: CriteriaScore;
+}
