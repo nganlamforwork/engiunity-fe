@@ -1,5 +1,11 @@
 import { redirect } from "next/navigation";
 
-export default function SessionPage({ params }: { params: { id: string } }) {
-  redirect(`/learning/speaking/session/${params.id}/part-1`);
+export default async function SessionPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const { id } = params;
+
+  redirect(`/learning/speaking/session/${id}/part-1`);
 }

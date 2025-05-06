@@ -11,6 +11,7 @@ export interface Session {
   topic: string;
   notes?: string;
   timestamp: string;
+  practiceType: string;
   questions: {
     part1: Question[];
     part2: Question[];
