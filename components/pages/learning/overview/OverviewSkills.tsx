@@ -35,7 +35,7 @@ const OverviewSkills = () => {
           title="Kĩ năng nói"
           imageSrc="Microphone"
           className="bg-palette-pink text-palette-pink-foreground"
-          href={routes.pages.learning.practice.speaking.value}
+          href={routes.pages.learning.speaking.value}
         />
       </div>
     </div>

@@ -35,7 +35,7 @@ export function NavSection({ projects }: { projects: ProjectItem[] }) {
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Learning</SidebarGroupLabel>
+      <SidebarGroupLabel>Luyện tập</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => {
           const Icon = item.icon;
