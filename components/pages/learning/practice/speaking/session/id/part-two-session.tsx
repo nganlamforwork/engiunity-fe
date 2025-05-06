@@ -1,20 +1,30 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Session } from "@/types/Speaking";
-import { PartOneQuestions } from "@/components/pages/learning/practice/speaking/session/id/part-one-questions";
+import { PartTwoPrompt } from "./part-two-prompt";
 import HeaderSkill from "@/components/pages/learning/HeaderSkill";
 import { routes } from "@/utils/routes";
 
-interface Part1SessionProps {
+interface Part2SessionProps {
   id: string;
 }
-export default function Part1Session({ id }: Part1SessionProps) {
+export default function Part2Session({ id }: Part2SessionProps) {
   const router = useRouter();
   const [session, setSession] = useState<Session | null>(null);
   const [answerMode, setAnswerMode] = useState<"text" | "chat">("text");
@@ -28,8 +38,14 @@ export default function Part1Session({ id }: Part1SessionProps) {
       const parsedSession = JSON.parse(sessionData);
       setSession(parsedSession);
 
-      // Restore current question index if it exists
-      if (parsedSession.currentQuestionIndex !== undefined) {
+      // If we're coming from part-1, reset the question index
+      if (parsedSession.currentStep !== 2) {
+        updateSession({
+          ...parsedSession,
+          currentStep: 2,
+          currentQuestionIndex: 0,
+        });
+      } else if (parsedSession.currentQuestionIndex !== undefined) {
         setCurrentQuestionIndex(parsedSession.currentQuestionIndex);
       }
 
@@ -39,10 +55,7 @@ export default function Part1Session({ id }: Part1SessionProps) {
     }
   }, [id, router]);
 
-  const updateSession = (updates: Partial<Session>) => {
-    if (!session) return;
-
-    const updatedSession = { ...session, ...updates };
+  const updateSession = (updatedSession: Session) => {
     localStorage.setItem(`session_${id}`, JSON.stringify(updatedSession));
     setSession(updatedSession);
   };
@@ -51,31 +64,36 @@ export default function Part1Session({ id }: Part1SessionProps) {
     if (!session) return;
 
     const updatedAnswers = { ...session.answers, [questionId]: answer };
-    updateSession({ answers: updatedAnswers });
+    updateSession({ ...session, answers: updatedAnswers });
   };
 
   const nextQuestion = () => {
     if (!session) return;
 
-    const questions = session.questions.part1;
+    const questions = session.questions.part2;
 
     if (currentQuestionIndex < questions.length - 1) {
       const newIndex = currentQuestionIndex + 1;
       setCurrentQuestionIndex(newIndex);
-      updateSession({ currentQuestionIndex: newIndex });
+      updateSession({ ...session, currentQuestionIndex: newIndex });
     } else {
-      // Move to Part 2
-      updateSession({ currentStep: 2, currentQuestionIndex: 0 });
-      router.push(`/learning/speaking/session/${id}/part-2`);
+      // Move to Part 3
+      updateSession({ ...session, currentStep: 3, currentQuestionIndex: 0 });
+      router.push(`/learning/speaking/session/${id}/part-3`);
     }
   };
 
   const prevQuestion = () => {
-    if (!session || currentQuestionIndex === 0) return;
+    if (!session) return;
 
-    const newIndex = currentQuestionIndex - 1;
-    setCurrentQuestionIndex(newIndex);
-    updateSession({ currentQuestionIndex: newIndex });
+    if (currentQuestionIndex > 0) {
+      const newIndex = currentQuestionIndex - 1;
+      setCurrentQuestionIndex(newIndex);
+      updateSession({ ...session, currentQuestionIndex: newIndex });
+    } else {
+      // Go back to Part 1
+      router.push(`/learning/speaking/session/${id}/part-1`);
+    }
   };
 
   if (isLoading || !session) {
@@ -86,12 +104,12 @@ export default function Part1Session({ id }: Part1SessionProps) {
     );
   }
 
-  const currentQuestion = session.questions.part1[currentQuestionIndex];
+  const currentQuestion = session.questions.part2[currentQuestionIndex];
   const isLastQuestion =
-    currentQuestionIndex === session.questions.part1.length - 1;
+    currentQuestionIndex === session.questions.part2.length - 1;
 
   // Calculate progress
-  const totalQuestions = session.questions.part1.length;
+  const totalQuestions = session.questions.part2.length;
   const progressPercentage =
     ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
@@ -99,7 +117,8 @@ export default function Part1Session({ id }: Part1SessionProps) {
     <div className="flex-1 overflow-auto">
       <HeaderSkill
         title={session.topic}
-        description="Luyện tập kỹ năng nói IELTS - Part 1: Giới thiệu và câu hỏi chung"
+        description="
+          Luyện tập kỹ năng nói IELTS - Part 2: Nói dài (Cue card)"
         topElements={
           <Button
             variant="ghost"
@@ -111,18 +130,19 @@ export default function Part1Session({ id }: Part1SessionProps) {
           </Button>
         }
       />
-
       <div className="max-w-5xl mx-auto px-4 py-6">
-        <Tabs defaultValue="part-1" className="mb-6">
+        <Tabs defaultValue="part-2" className="mb-6">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="part-1">Part 1</TabsTrigger>
             <TabsTrigger
-              value="part-2"
+              value="part-1"
               disabled={!session.practiceType.includes("full")}
-              onClick={() => router.push(`/practice/session/${id}/part-2`)}
+              onClick={() =>
+                router.push(`/learning/speaking/session/${id}/part-1`)
+              }
             >
-              Part 2
+              Part 1
             </TabsTrigger>
+            <TabsTrigger value="part-2">Part 2</TabsTrigger>
             <TabsTrigger
               value="part-3"
               disabled={!session.practiceType.includes("full")}
@@ -146,40 +166,39 @@ export default function Part1Session({ id }: Part1SessionProps) {
 
         <div>
           {currentQuestion && (
-            <PartOneQuestions
+            <PartTwoPrompt
               question={currentQuestion}
               answer={session.answers[currentQuestion.id] || ""}
               onAnswerChange={(answer) =>
                 handleAnswerChange(currentQuestion.id, answer)
               }
+              answerMode={answerMode}
             />
           )}
 
-          <div className="mt-4">
-            <Textarea
-              placeholder="Nhập câu trả lời của bạn ở đây..."
-              className="min-h-[150px]"
-              value={session.answers[currentQuestion.id] || ""}
-              onChange={(e) =>
-                handleAnswerChange(currentQuestion.id, e.target.value)
-              }
-            />
-          </div>
-        </div>
-        <div className="flex justify-between mt-4">
-          <Button
-            variant="secondary"
-            onClick={prevQuestion}
-            disabled={currentQuestionIndex === 0}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Câu trước
-          </Button>
+          {answerMode === "text" && currentQuestion && (
+            <div className="mt-4">
+              <Textarea
+                placeholder="Nhập câu trả lời của bạn ở đây..."
+                className="min-h-[150px]"
+                value={session.answers[currentQuestion.id] || ""}
+                onChange={(e) =>
+                  handleAnswerChange(currentQuestion.id, e.target.value)
+                }
+              />
+            </div>
+          )}
+          <div className="flex justify-between mt-4">
+            <Button variant="secondary" onClick={prevQuestion}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Câu trước
+            </Button>
 
-          <Button onClick={nextQuestion}>
-            {isLastQuestion ? "Phần tiếp theo" : "Câu tiếp theo"}{" "}
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+            <Button onClick={nextQuestion}>
+              {isLastQuestion ? "Phần tiếp theo" : "Câu tiếp theo"}{" "}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

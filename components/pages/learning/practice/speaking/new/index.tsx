@@ -126,7 +126,7 @@ export default function New() {
                           <Label htmlFor="full">Đầy đủ (Part 1, 2, 3)</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="part1" id="part1" />
+                          <RadioGroupItem value="part-1" id="part1" />
                           <Label htmlFor="part1">
                             Part 1: Giới thiệu và câu hỏi chung
                           </Label>

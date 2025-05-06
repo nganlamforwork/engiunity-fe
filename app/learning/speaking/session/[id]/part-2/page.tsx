@@ -1,4 +1,4 @@
-import Part1Session from "@/components/pages/learning/practice/speaking/session/id/part-one-session";
+import Part2Session from "@/components/pages/learning/practice/speaking/session/id/part-two-session";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,5 +11,5 @@ export default async function Part2SessionPage({
 }) {
   const { id } = params;
 
-  return <Part1Session id={id} />;
+  return <Part2Session id={id} />;
 }
