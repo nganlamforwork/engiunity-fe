@@ -5,14 +5,12 @@ interface PartOneQuestionsProps {
   question: Question;
   answer: string;
   onAnswerChange: (answer: string) => void;
-  answerMode: "text" | "chat";
 }
 
 export function PartOneQuestions({
   question,
   answer,
   onAnswerChange,
-  answerMode,
 }: PartOneQuestionsProps) {
   return (
     <div className="space-y-4">
@@ -31,13 +29,11 @@ export function PartOneQuestions({
         </CardContent>
       </Card>
 
-      {answerMode === "text" && (
-        <div className="mt-4">
-          <p className="text-sm text-muted-foreground mb-2">
-            Type your answer below as if you were speaking:
-          </p>
-        </div>
-      )}
+      <div className="mt-4">
+        <p className="text-sm text-muted-foreground mb-2">
+          Type your answer below as if you were speaking:
+        </p>
+      </div>
     </div>
   );
 }

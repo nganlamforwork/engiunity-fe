@@ -2,9 +2,9 @@ import Part1Session from "@/components/pages/learning/practice/speaking/session/
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Speaking Part 1",
+  title: "Speaking Part 2",
 };
-export default async function Part1SessionPage({
+export default async function Part2SessionPage({
   params,
 }: {
   params: { id: string };
