@@ -1,22 +1,18 @@
 "use client";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -31,7 +27,7 @@ const formSchema = z.object({
     message: "Topic must be at least 2 characters.",
   }),
   additionalNotes: z.string().optional(),
-  practiceType: z.enum(["part1", "part2", "part3", "full"]),
+  practiceType: z.enum(["part-1", "part-2", "part-3", "full"]),
 });
 
 export default function New() {
@@ -72,9 +68,9 @@ export default function New() {
         })
       );
 
-      if (values.practiceType === "full" || values.practiceType === "part1") {
+      if (values.practiceType === "full" || values.practiceType === "part-1") {
         router.push(`/learning/speaking/session/${sessionId}/part-1`);
-      } else if (values.practiceType === "part2") {
+      } else if (values.practiceType === "part-2") {
         router.push(`/learning/speaking/session/${sessionId}/part-2`);
       } else {
         router.push(`/learning/speaking/session/${sessionId}/part-3`);
@@ -132,13 +128,13 @@ export default function New() {
                           </Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="part2" id="part2" />
+                          <RadioGroupItem value="part-2" id="part2" />
                           <Label htmlFor="part2">
                             Part 2: Nói dài (Cue card)
                           </Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="part3" id="part3" />
+                          <RadioGroupItem value="part-3" id="part3" />
                           <Label htmlFor="part3">
                             Part 3: Thảo luận chuyên sâu
                           </Label>

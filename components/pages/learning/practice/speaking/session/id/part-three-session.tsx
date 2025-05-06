@@ -1,19 +1,9 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, ArrowRight, Loader2, Send } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Session } from "@/types/Speaking";
@@ -93,7 +83,7 @@ export default function Part3Session({ id }: Part3SessionProps) {
       updateSession({ ...session, currentQuestionIndex: newIndex });
     } else {
       // Go back to Part 2
-      router.push(`/speaking/session/${id}/part2`);
+      router.push(`/speaking/session/${id}/part-2`);
     }
   };
 
@@ -110,7 +100,7 @@ export default function Part3Session({ id }: Part3SessionProps) {
       localStorage.setItem(`results_${id}`, JSON.stringify(grading));
 
       // Navigate to results page
-      router.push(`/speaking/results/${id}`);
+      router.push(`/learning/speaking/result/${id}`);
     }, 2000);
   };
 
@@ -153,14 +143,18 @@ export default function Part3Session({ id }: Part3SessionProps) {
             <TabsTrigger
               value="part-1"
               disabled={!session.practiceType.includes("full")}
-              onClick={() => router.push(`/speaking/session/${id}/part-1`)}
+              onClick={() =>
+                router.push(`/learning/speaking/session/${id}/part-1`)
+              }
             >
               Part 1
             </TabsTrigger>
             <TabsTrigger
               value="part-2"
               disabled={!session.practiceType.includes("full")}
-              onClick={() => router.push(`/speaking/session/${id}/part-2`)}
+              onClick={() =>
+                router.push(`/learning/speaking/session/${id}/part-2`)
+              }
             >
               Part 2
             </TabsTrigger>
