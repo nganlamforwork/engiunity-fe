@@ -31,7 +31,6 @@ export interface SpeakingSession {
   topic: string;
   notes?: string;
   part: ESpeakingPart;
-  questions: SpeakingQuestion[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -81,4 +80,9 @@ export interface GradingResult {
   overallFeedback: string;
   sampleAnswers: Record<string, string>;
   keyVocabulary: Record<string, string[]>;
+}
+export interface SpeakingResponse {
+  questionId: number;
+  transcript: string;
+  audioUrl?: string;
 }

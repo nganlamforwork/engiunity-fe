@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,13 +16,6 @@ import {
   useSubmitSessionMutation,
   useUpdateSessionResponsesMutation,
 } from "@/store/api/speakingSessionApi";
-import { useAppDispatch, useAppSelector } from "@/store";
-import {
-  setCurrentQuestionIndex,
-  updateResponse,
-  setSession,
-  setCurrentStep,
-} from "@/store/slice/speakingSessionSlice";
 import { ESpeakingPart } from "@/types/Speaking";
 
 interface Part3SessionProps {
@@ -31,24 +24,14 @@ interface Part3SessionProps {
 
 export default function Part3Session({ id }: Part3SessionProps) {
   const router = useRouter();
-  const dispatch = useAppDispatch();
-
-  // Get session state from Redux
-  const { currentSession } = useAppSelector((state) => state.speakingSession);
-  const currentQuestionIndex = currentSession?.currentQuestionIndex || 0;
-  const answerMode = "text"; // Default to text mode
-
-  // Parse the ID to a number for the API
   const sessionId = Number.parseInt(id, 10);
 
-  // Fetch session data from API
   const {
     data: sessionData,
     isLoading: sessionLoading,
     isError: sessionError,
   } = useGetSpeakingSessionQuery({ id: sessionId });
 
-  // Fetch questions from the API
   const {
     data: questions,
     isLoading: questionsLoading,
@@ -58,71 +41,84 @@ export default function Part3Session({ id }: Part3SessionProps) {
     part: ESpeakingPart.PART_3,
   });
 
-  // Mutations
   const [updateSessionResponses] = useUpdateSessionResponsesMutation();
   const [submitSession, { isLoading: isSubmitting }] =
     useSubmitSessionMutation();
 
-  // Initialize session in Redux when data is loaded
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [responses, setResponses] = useState<Record<string, string>>({});
+  const answerMode = "text";
+
   useEffect(() => {
-    if (sessionData && !currentSession) {
-      dispatch(setSession(sessionData));
-      dispatch(setCurrentStep(3)); // Set to Part 3
-      dispatch(setCurrentQuestionIndex(0)); // Reset question index
-    } else if (currentSession && currentSession.currentStep !== 3) {
-      dispatch(setCurrentStep(3)); // Update to Part 3
-      dispatch(setCurrentQuestionIndex(0)); // Reset question index
+    if (sessionData) {
+      const migratedResponses: Record<string, string> = {};
+
+      if ("answers" in sessionData && sessionData.answers) {
+        Object.entries(sessionData.answers).forEach(([qid, ans]) => {
+          migratedResponses[qid] = ans as string;
+        });
+      } else if ("responses" in sessionData && sessionData.responses) {
+        Object.entries(sessionData.responses).forEach(([qid, resp]) => {
+          migratedResponses[qid] = resp as string;
+        });
+      }
+
+      setResponses(migratedResponses);
     }
-  }, [sessionData, currentSession, dispatch]);
+  }, [sessionData]);
 
-  const handleAnswerChange = (questionId: string, response: string) => {
-    dispatch(updateResponse({ questionId, response }));
+  const getResponse = (questionId: string): string => {
+    return responses[questionId] || "";
+  };
 
-    // Auto-save answer to API (debounced in a real implementation)
-    if (currentSession) {
-      updateSessionResponses({
+  const handleResponseChange = (questionId: string, response: string) => {
+    setResponses((prev) => ({
+      ...prev,
+      [questionId]: response,
+    }));
+  };
+
+  const saveResponses = async () => {
+    try {
+      await updateSessionResponses({
         sessionId,
-        responses: {
-          ...currentSession.responses,
-          [questionId]: response,
-        },
-      });
+        responses,
+      }).unwrap();
+    } catch (error) {
+      console.error("Failed to save responses:", error);
     }
   };
 
   const nextQuestion = () => {
     if (!questions) return;
-
     if (currentQuestionIndex < questions.length - 1) {
-      dispatch(setCurrentQuestionIndex(currentQuestionIndex + 1));
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // This is the last question of the last part
       handleSubmit();
     }
   };
 
   const prevQuestion = () => {
     if (currentQuestionIndex > 0) {
-      dispatch(setCurrentQuestionIndex(currentQuestionIndex - 1));
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
     } else {
-      // Go back to Part 2
-      router.push(`/learning/speaking/session/${id}/part-2`);
+      saveResponses().then(() => {
+        router.push(`/learning/speaking/session/${id}/part-2`);
+      });
     }
   };
 
   const handleSubmit = async () => {
     try {
-      const result = await submitSession({ sessionId }).unwrap();
-      // Navigate to results page with the grading result
+      await saveResponses();
+      await submitSession({ sessionId }).unwrap();
       router.push(`/learning/speaking/result/${id}`);
     } catch (error) {
       console.error("Failed to submit session:", error);
-      // Handle error (show toast, etc.)
     }
   };
 
-  // Show loading state while fetching session or questions
-  if (sessionLoading || questionsLoading || !currentSession) {
+  if (sessionLoading || questionsLoading || !sessionData) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -130,7 +126,6 @@ export default function Part3Session({ id }: Part3SessionProps) {
     );
   }
 
-  // Handle error state
   if (sessionError || questionsError || !questions) {
     return (
       <div className="flex h-screen items-center justify-center flex-col">
@@ -144,22 +139,21 @@ export default function Part3Session({ id }: Part3SessionProps) {
 
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
-
-  // Calculate progress
-  const totalQuestions = questions.length;
   const progressPercentage =
-    ((currentQuestionIndex + 1) / totalQuestions) * 100;
+    ((currentQuestionIndex + 1) / questions.length) * 100;
 
   return (
     <div className="flex-1 overflow-auto">
       <HeaderSkill
-        title={currentSession.topic}
+        title={sessionData.topic}
         description="Luyện tập kỹ năng nói IELTS - Part 3: Thảo luận chuyên sâu"
         topElements={
           <Button
             variant="ghost"
             onClick={() => {
-              return router.push(routes.pages.learning.speaking.new.value);
+              saveResponses().then(() => {
+                router.push(routes.pages.learning.speaking.new.value);
+              });
             }}
           >
             <ArrowLeft className="mr-2 h-4 w-4" /> Quay lại
@@ -171,19 +165,23 @@ export default function Part3Session({ id }: Part3SessionProps) {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger
               value="part-1"
-              disabled={!currentSession.part.includes(ESpeakingPart.FULL)}
-              onClick={() =>
-                router.push(`/learning/speaking/session/${id}/part-1`)
-              }
+              disabled={!sessionData.part.includes(ESpeakingPart.FULL)}
+              onClick={() => {
+                saveResponses().then(() => {
+                  router.push(`/learning/speaking/session/${id}/part-1`);
+                });
+              }}
             >
               Part 1
             </TabsTrigger>
             <TabsTrigger
               value="part-2"
-              disabled={!currentSession.part.includes(ESpeakingPart.FULL)}
-              onClick={() =>
-                router.push(`/learning/speaking/session/${id}/part-2`)
-              }
+              disabled={!sessionData.part.includes(ESpeakingPart.FULL)}
+              onClick={() => {
+                saveResponses().then(() => {
+                  router.push(`/learning/speaking/session/${id}/part-2`);
+                });
+              }}
             >
               Part 2
             </TabsTrigger>
@@ -194,7 +192,7 @@ export default function Part3Session({ id }: Part3SessionProps) {
         <div className="mb-6">
           <div className="flex justify-start items-center mb-2">
             <span className="text-sm font-medium">
-              Câu hỏi {currentQuestionIndex + 1} / {totalQuestions}
+              Câu hỏi {currentQuestionIndex + 1} / {questions.length}
             </span>
           </div>
           <Progress value={progressPercentage} className="h-2 bg-gray-100" />
@@ -211,11 +209,9 @@ export default function Part3Session({ id }: Part3SessionProps) {
                   ? [currentQuestion.followUp]
                   : [],
               }}
-              answer={
-                currentSession.responses[currentQuestion.id.toString()] || ""
-              }
-              onAnswerChange={(answer) =>
-                handleAnswerChange(currentQuestion.id.toString(), answer)
+              answer={getResponse(currentQuestion.id.toString())}
+              onAnswerChange={(response) =>
+                handleResponseChange(currentQuestion.id.toString(), response)
               }
               answerMode={answerMode}
             />
@@ -226,11 +222,9 @@ export default function Part3Session({ id }: Part3SessionProps) {
               <Textarea
                 placeholder="Nhập câu trả lời của bạn ở đây..."
                 className="min-h-[150px]"
-                value={
-                  currentSession.responses[currentQuestion.id.toString()] || ""
-                }
+                value={getResponse(currentQuestion.id.toString())}
                 onChange={(e) =>
-                  handleAnswerChange(
+                  handleResponseChange(
                     currentQuestion.id.toString(),
                     e.target.value
                   )

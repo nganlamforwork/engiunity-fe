@@ -13,44 +13,14 @@ import storage from "redux-persist/lib/storage";
 import { usersApi } from "./api/usersApi";
 import { writingExercisesApi } from "./api/writingExercisesApi";
 import { speakingSessionApi } from "./api/speakingSessionApi";
-import { speakingSessionSlice } from "./slice/speakingSessionSlice";
-
-// Define migrations for redux-persist
-const migrations = {
-  // Migration to convert answers to responses
-  1: (state: any) => {
-    if (state.speakingSession && state.speakingSession.currentSession) {
-      const currentSession = state.speakingSession.currentSession;
-      if (currentSession.answers && !currentSession.responses) {
-        return {
-          ...state,
-          speakingSession: {
-            ...state.speakingSession,
-            currentSession: {
-              ...currentSession,
-              responses: { ...currentSession.answers },
-              // Don't delete answers here as it might cause issues
-            },
-          },
-        };
-      }
-    }
-    return state;
-  },
-};
 
 const persistConfig = {
   key: "root",
   storage,
-  version: 1, // Set the current version
-  migrate: createMigrate(migrations, {
-    debug: process.env.NODE_ENV === "development",
-  }),
 };
 
 const combinedReducers = combineReducers({
   auth: authSlice.reducer,
-  speakingSession: speakingSessionSlice.reducer,
   [authApi.reducerPath]: authApi.reducer,
   [usersApi.reducerPath]: usersApi.reducer,
   [writingExercisesApi.reducerPath]: writingExercisesApi.reducer,

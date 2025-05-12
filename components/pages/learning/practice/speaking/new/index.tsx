@@ -80,18 +80,10 @@ export default function New() {
     try {
       const response = await createSpeakingSession(values).unwrap();
       const sessionId = response.id;
-      const firstQuestion = response.questions?.[0];
 
-      if (!firstQuestion) {
-        throw new Error("Không có câu hỏi nào được tạo.");
-      }
-
-      const part = firstQuestion.part;
-      console.log(firstQuestion);
-
-      if (part === ESpeakingPart.PART_1) {
+      if (values.part === ESpeakingPart.PART_1) {
         router.push(`/learning/speaking/session/${sessionId}/part-1`);
-      } else if (part === ESpeakingPart.PART_2) {
+      } else if (values.part === ESpeakingPart.PART_2) {
         router.push(`/learning/speaking/session/${sessionId}/part-2`);
       } else {
         router.push(`/learning/speaking/session/${sessionId}/part-3`);

@@ -6,6 +6,7 @@ import {
   SpeakingQuestion,
   SpeakingSession,
   GradingResult,
+  SpeakingResponse,
 } from "@/types/Speaking";
 
 const baseUrl = "speaking/sessions";
@@ -13,8 +14,8 @@ const baseUrl = "speaking/sessions";
 export const speakingSessionApi = createApi({
   reducerPath: "speakingSessionApi",
   baseQuery: axiosBaseQuery(),
-  keepUnusedDataFor: 0,
-  refetchOnMountOrArgChange: true,
+  keepUnusedDataFor: 300,
+  refetchOnMountOrArgChange: false,
   tagTypes: ["Speaking Session"],
   endpoints: (builder) => ({
     createSpeakingSession: builder.mutation<
@@ -67,13 +68,20 @@ export const speakingSessionApi = createApi({
       { sessionId: number; responses: Record<string, string> }
     >({
       query: ({ sessionId, responses }) => {
+        // Convert from Record<string, string> to the format expected by the backend
+        const formattedResponses: SpeakingResponse[] = Object.entries(
+          responses
+        ).map(([questionId, transcript]) => ({
+          questionId: Number.parseInt(questionId, 10),
+          transcript,
+        }));
+
         return {
-          url: `${baseUrl}/${sessionId}/response`,
-          method: "PATCH",
-          data: { responses },
+          url: `${baseUrl}/${sessionId}/responses`,
+          method: "PUT",
+          data: { responses: formattedResponses },
         };
       },
-      invalidatesTags: ["Speaking Session"],
     }),
     submitSession: builder.mutation<GradingResult, { sessionId: number }>({
       query: ({ sessionId }) => {
