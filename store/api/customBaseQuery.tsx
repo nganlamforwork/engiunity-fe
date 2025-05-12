@@ -1,10 +1,10 @@
+import { loginSuccess, logout } from "../slice/authSlice";
+
+import { AxiosError } from "axios";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BaseQueryFn } from "@reduxjs/toolkit/query";
-import { AxiosError } from "axios";
-import Cookies from "js-cookie";
-import { api } from "./api";
 import { RootState } from "..";
-import { loginSuccess, logout } from "../slice/authSlice";
+import { api } from "./api";
 
 const axiosBaseQuery =
   (): BaseQueryFn<
@@ -19,7 +19,11 @@ const axiosBaseQuery =
   > =>
   async ({ url, method, data, params }, apiContext) => {
     try {
-      const skipAuth = ["auth/login", "auth/refresh"].includes(url);
+      const skipAuth =
+        url === "auth/login" ||
+        url === "auth/refresh" ||
+        (url === "users" && method.toUpperCase() === "POST");
+      console.log(url, method);
 
       // Get accessToken from persist store
       const state = apiContext.getState() as RootState;

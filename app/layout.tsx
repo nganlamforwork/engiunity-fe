@@ -1,17 +1,15 @@
 "use client";
+import "./globals.css";
+
+import { persistor, store, useAppDispatch } from "@/store";
 
 import type { Metadata } from "next";
-import { useRouter } from "next/navigation"; // Import client-side router
+import { PersistGate } from "redux-persist/integration/react";
+import { Provider } from "react-redux";
 import { Raleway } from "next/font/google";
-import "./globals.css";
 import { ThemeProvider } from "@/context/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
-
-import { Provider } from "react-redux";
-import { persistor, store, useAppDispatch } from "@/store";
-import { useEffect } from "react";
-import { initializeAuth, logout } from "@/store/slice/authSlice";
-import { PersistGate } from "redux-persist/integration/react";
+import { useRouter } from "next/navigation"; // Import client-side router
 
 const raleway = Raleway({
   variable: "--font-raleway",
@@ -29,15 +27,15 @@ const AuthCheck = () => {
   //   (state: RootState) => state.auth.isAuthenticated
   // );
 
-  useEffect(() => {
-    dispatch(initializeAuth())
-      .unwrap()
-      .catch(() => {
-        console.log("Initialize auth failed");
-        dispatch(logout());
-        router.push("/"); // Redirect on failure
-      });
-  }, [dispatch, router]);
+  // useEffect(() => {
+  //   dispatch(initializeAuth())
+  //     .unwrap()
+  //     .catch(() => {
+  //       console.log("Initialize auth failed");
+  //       dispatch(logout());
+  //       router.push("/"); // Redirect on failure
+  //     });
+  // }, [dispatch, router]);
 
   // Redirect immediately if the user is not authenticated
   // useEffect(() => {
