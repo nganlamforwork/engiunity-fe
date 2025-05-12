@@ -3,13 +3,13 @@ import { Question } from "@/types/Speaking";
 
 interface PartOneQuestionsProps {
   question: Question;
-  answer: string;
+  response: string;
   onAnswerChange: (answer: string) => void;
 }
 
 export function PartOneQuestions({
   question,
-  answer,
+  response,
   onAnswerChange,
 }: PartOneQuestionsProps) {
   return (

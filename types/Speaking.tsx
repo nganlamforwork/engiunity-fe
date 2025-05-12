@@ -54,7 +54,7 @@ export interface SessionState {
   part: ESpeakingPart;
   currentStep: number;
   currentQuestionIndex: number;
-  answers: Record<string, string>;
+  responses: Record<string, string>;
   createdAt?: string;
 }
 

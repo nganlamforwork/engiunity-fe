@@ -62,15 +62,15 @@ export const speakingSessionApi = createApi({
       },
       providesTags: ["Speaking Session"],
     }),
-    updateSessionAnswers: builder.mutation<
+    updateSessionResponses: builder.mutation<
       void,
-      { sessionId: number; answers: Record<string, string> }
+      { sessionId: number; responses: Record<string, string> }
     >({
-      query: ({ sessionId, answers }) => {
+      query: ({ sessionId, responses }) => {
         return {
           url: `${baseUrl}/${sessionId}/response`,
           method: "PATCH",
-          data: { answers },
+          data: { responses },
         };
       },
       invalidatesTags: ["Speaking Session"],
@@ -91,6 +91,6 @@ export const {
   useCreateSpeakingSessionMutation,
   useGetSpeakingSessionQuery,
   useGetQuestionsQuery,
-  useUpdateSessionAnswersMutation,
+  useUpdateSessionResponsesMutation,
   useSubmitSessionMutation,
 } = speakingSessionApi;

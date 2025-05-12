@@ -16,8 +16,9 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
   setCurrentQuestionIndex,
-  updateAnswer,
+  updateResponse,
   setSession,
+  migrateAnswersToResponses,
 } from "@/store/slice/speakingSessionSlice";
 import { ESpeakingPart } from "@/types/Speaking";
 
@@ -58,10 +59,15 @@ export default function Part1Session({ id }: Part1SessionProps) {
     if (sessionData && !currentSession) {
       dispatch(setSession(sessionData));
     }
+
+    // Migrate old answers to new responses if needed
+    if (currentSession) {
+      dispatch(migrateAnswersToResponses());
+    }
   }, [sessionData, currentSession, dispatch]);
 
-  const handleAnswerChange = (questionId: string, answer: string) => {
-    dispatch(updateAnswer({ questionId, answer }));
+  const handleResponseChange = (questionId: string, response: string) => {
+    dispatch(updateResponse({ questionId, response }));
   };
 
   const nextQuestion = () => {
@@ -102,6 +108,25 @@ export default function Part1Session({ id }: Part1SessionProps) {
     );
   }
 
+  // Get responses safely, handling both old and new data structures
+  const getResponse = (questionId: string): string => {
+    if (!currentSession) return "";
+
+    // First check if responses exists and has the question
+    if (currentSession.responses && currentSession.responses[questionId]) {
+      return currentSession.responses[questionId];
+    }
+
+    // Fallback to old answers field if it exists
+    // @ts-ignore - We know this might exist in the persisted state
+    if (currentSession.answers && currentSession.answers[questionId]) {
+      // @ts-ignore
+      return currentSession.answers[questionId];
+    }
+
+    return "";
+  };
+
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
@@ -133,14 +158,14 @@ export default function Part1Session({ id }: Part1SessionProps) {
             <TabsTrigger value="part-1">Part 1</TabsTrigger>
             <TabsTrigger
               value="part-2"
-              disabled={!currentSession.part.includes("full")}
+              disabled={!currentSession.part.includes(ESpeakingPart.FULL)}
               onClick={() => router.push(`/practice/session/${id}/part-2`)}
             >
               Part 2
             </TabsTrigger>
             <TabsTrigger
               value="part-3"
-              disabled={!currentSession.part.includes("full")}
+              disabled={!currentSession.part.includes(ESpeakingPart.FULL)}
               onClick={() =>
                 router.push(`/learning/speaking/session/${id}/part-3`)
               }
@@ -167,11 +192,9 @@ export default function Part1Session({ id }: Part1SessionProps) {
                 text: currentQuestion.text,
                 subQuestions: currentQuestion.subQuestions || [],
               }}
-              answer={
-                currentSession.answers[currentQuestion.id.toString()] || ""
-              }
-              onAnswerChange={(answer) =>
-                handleAnswerChange(currentQuestion.id.toString(), answer)
+              response={getResponse(currentQuestion.id.toString())}
+              onAnswerChange={(response) =>
+                handleResponseChange(currentQuestion.id.toString(), response)
               }
             />
           )}
@@ -180,11 +203,9 @@ export default function Part1Session({ id }: Part1SessionProps) {
             <Textarea
               placeholder="Nhập câu trả lời của bạn ở đây..."
               className="min-h-[150px]"
-              value={
-                currentSession.answers[currentQuestion.id.toString()] || ""
-              }
+              value={getResponse(currentQuestion.id.toString())}
               onChange={(e) =>
-                handleAnswerChange(
+                handleResponseChange(
                   currentQuestion.id.toString(),
                   e.target.value
                 )

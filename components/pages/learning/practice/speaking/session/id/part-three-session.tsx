@@ -14,12 +14,12 @@ import {
   useGetQuestionsQuery,
   useGetSpeakingSessionQuery,
   useSubmitSessionMutation,
-  useUpdateSessionAnswersMutation,
+  useUpdateSessionResponsesMutation,
 } from "@/store/api/speakingSessionApi";
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
   setCurrentQuestionIndex,
-  updateAnswer,
+  updateResponse,
   setSession,
   setCurrentStep,
 } from "@/store/slice/speakingSessionSlice";
@@ -59,7 +59,7 @@ export default function Part3Session({ id }: Part3SessionProps) {
   });
 
   // Mutations
-  const [updateSessionAnswers] = useUpdateSessionAnswersMutation();
+  const [updateSessionResponses] = useUpdateSessionResponsesMutation();
   const [submitSession, { isLoading: isSubmitting }] =
     useSubmitSessionMutation();
 
@@ -75,16 +75,16 @@ export default function Part3Session({ id }: Part3SessionProps) {
     }
   }, [sessionData, currentSession, dispatch]);
 
-  const handleAnswerChange = (questionId: string, answer: string) => {
-    dispatch(updateAnswer({ questionId, answer }));
+  const handleAnswerChange = (questionId: string, response: string) => {
+    dispatch(updateResponse({ questionId, response }));
 
     // Auto-save answer to API (debounced in a real implementation)
     if (currentSession) {
-      updateSessionAnswers({
+      updateSessionResponses({
         sessionId,
-        answers: {
-          ...currentSession.answers,
-          [questionId]: answer,
+        responses: {
+          ...currentSession.responses,
+          [questionId]: response,
         },
       });
     }
@@ -212,7 +212,7 @@ export default function Part3Session({ id }: Part3SessionProps) {
                   : [],
               }}
               answer={
-                currentSession.answers[currentQuestion.id.toString()] || ""
+                currentSession.responses[currentQuestion.id.toString()] || ""
               }
               onAnswerChange={(answer) =>
                 handleAnswerChange(currentQuestion.id.toString(), answer)
@@ -227,7 +227,7 @@ export default function Part3Session({ id }: Part3SessionProps) {
                 placeholder="Nhập câu trả lời của bạn ở đây..."
                 className="min-h-[150px]"
                 value={
-                  currentSession.answers[currentQuestion.id.toString()] || ""
+                  currentSession.responses[currentQuestion.id.toString()] || ""
                 }
                 onChange={(e) =>
                   handleAnswerChange(

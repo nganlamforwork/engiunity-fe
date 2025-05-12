@@ -17,7 +17,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
   setCurrentQuestionIndex,
-  updateAnswer,
+  updateResponse,
   setSession,
   setCurrentStep,
 } from "@/store/slice/speakingSessionSlice";
@@ -68,8 +68,8 @@ export default function Part2Session({ id }: Part2SessionProps) {
     }
   }, [sessionData, currentSession, dispatch]);
 
-  const handleAnswerChange = (questionId: string, answer: string) => {
-    dispatch(updateAnswer({ questionId, answer }));
+  const handleAnswerChange = (questionId: string, response: string) => {
+    dispatch(updateResponse({ questionId, response }));
   };
 
   const nextQuestion = () => {
@@ -183,10 +183,10 @@ export default function Part2Session({ id }: Part2SessionProps) {
                 cueCard: currentQuestion.cueCard || [],
               }}
               answer={
-                currentSession.answers[currentQuestion.id.toString()] || ""
+                currentSession.responses[currentQuestion.id.toString()] || ""
               }
-              onAnswerChange={(answer) =>
-                handleAnswerChange(currentQuestion.id.toString(), answer)
+              onAnswerChange={(response) =>
+                handleAnswerChange(currentQuestion.id.toString(), response)
               }
               answerMode={answerMode}
             />
@@ -198,7 +198,7 @@ export default function Part2Session({ id }: Part2SessionProps) {
                 placeholder="Nhập câu trả lời của bạn ở đây..."
                 className="min-h-[150px]"
                 value={
-                  currentSession.answers[currentQuestion.id.toString()] || ""
+                  currentSession.responses[currentQuestion.id.toString()] || ""
                 }
                 onChange={(e) =>
                   handleAnswerChange(

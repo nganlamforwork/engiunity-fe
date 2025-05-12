@@ -23,7 +23,7 @@ const convertToSessionState = (session: SpeakingSession): SessionState => {
     part: session.part,
     currentStep: 1, // Default to step 1 (Part 1)
     currentQuestionIndex: 0, // Default to first question
-    answers: {}, // Initialize empty answers
+    responses: {}, // Initialize empty responses
     createdAt: session.createdAt,
   };
 };
@@ -45,14 +45,19 @@ export const speakingSessionSlice = createSlice({
         };
       }
     },
-    updateAnswer: (
+    updateResponse: (
       state,
-      action: PayloadAction<{ questionId: string; answer: string }>
+      action: PayloadAction<{ questionId: string; response: string }>
     ) => {
       if (state.currentSession) {
-        state.currentSession.answers = {
-          ...state.currentSession.answers,
-          [action.payload.questionId]: action.payload.answer,
+        // Initialize responses if it doesn't exist
+        if (!state.currentSession.responses) {
+          state.currentSession.responses = {};
+        }
+
+        state.currentSession.responses = {
+          ...state.currentSession.responses,
+          [action.payload.questionId]: action.payload.response,
         };
       }
     },
@@ -78,18 +83,35 @@ export const speakingSessionSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
+    // Add a new action to migrate old data structure
+    migrateAnswersToResponses: (state) => {
+      if (state.currentSession) {
+        // Check if we have the old answers field in the state
+        // @ts-ignore - We know this might exist in the persisted state
+        const oldAnswers = state.currentSession.answers;
+
+        if (oldAnswers && !state.currentSession.responses) {
+          // Migrate old answers to new responses field
+          state.currentSession.responses = oldAnswers;
+          // Remove old answers field
+          // @ts-ignore - We're intentionally removing this
+          delete state.currentSession.answers;
+        }
+      }
+    },
   },
 });
 
 export const {
   setSession,
   updateSession,
-  updateAnswer,
+  updateResponse,
   setCurrentQuestionIndex,
   setCurrentStep,
   setLoading,
   setError,
   clearSession,
+  migrateAnswersToResponses,
 } = speakingSessionSlice.actions;
 
 export default speakingSessionSlice.reducer;
