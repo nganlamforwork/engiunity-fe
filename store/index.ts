@@ -2,16 +2,9 @@
 
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { persistReducer, persistStore } from "redux-persist";
-
 import { authApi } from "@/store/api/authApi";
 import { authSlice } from "@/store/slice/authSlice";
 import { sessionSlice } from "./slice/sessionSlice";
-import {
-  type TypedUseSelectorHook,
-  useDispatch,
-  useSelector,
-} from "react-redux";
 import { persistReducer, persistStore, createMigrate } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { usersApi } from "./api/usersApi";
