@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import Result from "@/components/pages/learning/practice/speaking/result/id";
+import Result from "@/components/pages/learning/practice/speaking/session/id/result/id";
 
 export const metadata: Metadata = {
   title: "Result",

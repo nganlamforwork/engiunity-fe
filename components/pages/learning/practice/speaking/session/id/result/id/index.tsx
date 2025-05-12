@@ -1,8 +1,5 @@
 "use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,36 +9,29 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Download, Home } from "lucide-react";
-import { GradingResult, Session } from "@/types/Speaking";
+import { ArrowLeft, Download } from "lucide-react";
 import { GradingResults } from "./grading-result";
 import { SampleAnswer } from "./sample-answer";
 import HeaderSkill from "@/components/pages/learning/HeaderSkill";
 import { routes } from "@/utils/routes";
 import { CircularProgress } from "@/components/customized/progress/progress-09";
+import { useGetResultQuery } from "@/store/api/speakingSessionApi";
+import { useRouter } from "next/navigation";
 
 interface ResultsProps {
   id: string;
 }
+
 export default function Result({ id }: ResultsProps) {
   const router = useRouter();
-  const [session, setSession] = useState<Session | null>(null);
-  const [results, setResults] = useState<GradingResult | null>(null);
+  const {
+    data: result,
+    isLoading,
+    isError,
+    error,
+  } = useGetResultQuery({ id: Number(id) });
 
-  useEffect(() => {
-    // In a real app, we would fetch this from an API
-    const sessionData = localStorage.getItem(`session_${id}`);
-    const resultsData = localStorage.getItem(`results_${id}`);
-
-    if (sessionData && resultsData) {
-      setSession(JSON.parse(sessionData));
-      setResults(JSON.parse(resultsData));
-    } else {
-      router.push("/speaking");
-    }
-  }, [id, router]);
-
-  if (!session || !results) {
+  if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <p>Loading results...</p>
@@ -49,12 +39,26 @@ export default function Result({ id }: ResultsProps) {
     );
   }
 
-  const overallScore =
-    (results.ideaDevelopment.score +
-      results.vocabulary.score +
-      results.grammar.score +
-      results.coherence.score) /
-    4;
+  if (isError) {
+    console.log(error);
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p>Error</p>
+      </div>
+    );
+  }
+
+  if (!result) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p>No results found.</p>
+      </div>
+    );
+  }
+
+  const { speakingSession, score, scoreStatus, scoreDetail } = result;
+  const overallScore = score || 0;
+  const session = speakingSession;
 
   return (
     <div className="flex-1 overflow-auto">
@@ -65,7 +69,7 @@ export default function Result({ id }: ResultsProps) {
           <Button
             variant="ghost"
             onClick={() => {
-              return router.push(routes.pages.learning.speaking.new.value);
+              return router.push(routes.pages.learning.speaking.value);
             }}
           >
             <ArrowLeft className="mr-2 h-4 w-4" /> Quay lại
@@ -104,32 +108,37 @@ export default function Result({ id }: ResultsProps) {
                   <div className="flex justify-between items-center">
                     <span>Phát triển ý tưởng</span>
                     <span className="font-medium">
-                      {results.ideaDevelopment.score.toFixed(1)}/9
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Từ vựng</span>
-                    <span className="font-medium">
-                      {results.vocabulary.score.toFixed(1)}/9
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Ngữ pháp</span>
-                    <span className="font-medium">
-                      {results.grammar.score.toFixed(1)}/9
+                      {scoreDetail.fluency_and_coherence.score.toFixed(1)}/9
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span>Mạch lạc</span>
                     <span className="font-medium">
-                      {results.coherence.score.toFixed(1)}/9
+                      {scoreDetail.lexical_resource.score.toFixed(1)}/9
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span>Ngữ pháp</span>
+                    <span className="font-medium">
+                      {scoreDetail.grammatical_range_and_accuracy.score.toFixed(
+                        1
+                      )}
+                      /9
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span>Phát âm</span>
+                    <span className="font-medium">
+                      {scoreDetail.pronunciation.score.toFixed(1)}/9
                     </span>
                   </div>
                 </div>
 
                 <div>
                   <h3 className="font-medium mb-2">Nhận xét tổng quan</h3>
-                  <p className="text-sm">{results.overallFeedback}</p>
+                  <p className="text-sm">
+                    {scoreDetail.overview.overallFeedback}
+                  </p>
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col space-y-2">
@@ -147,15 +156,15 @@ export default function Result({ id }: ResultsProps) {
           <Tabs defaultValue="grading" className="w-full lg:col-span-3">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="grading">Đánh giá & Nhận xét</TabsTrigger>
-              <TabsTrigger value="sample">Câu trả lời mẫu</TabsTrigger>
+              <TabsTrigger value="sample">Bài mẫu</TabsTrigger>
             </TabsList>
 
             <TabsContent value="grading" className="mt-4">
-              <GradingResults results={results} />
+              <GradingResults results={result} />
             </TabsContent>
 
             <TabsContent value="sample" className="mt-4">
-              <SampleAnswer session={session} results={results} />
+              <SampleAnswer session={session} results={result} />
             </TabsContent>
           </Tabs>
         </div>

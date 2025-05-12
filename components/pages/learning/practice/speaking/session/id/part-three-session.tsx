@@ -51,19 +51,20 @@ export default function Part3Session({ id }: Part3SessionProps) {
 
   useEffect(() => {
     if (questions && questions.length > 0) {
-      const initialResponses: Record<string, string> = {}
+      const initialResponses: Record<string, string> = {};
 
       questions.forEach((question) => {
         if (question.response && question.response.transcript) {
-          initialResponses[question.id.toString()] = question.response.transcript
+          initialResponses[question.id.toString()] =
+            question.response.transcript;
         }
-      })
+      });
 
       if (Object.keys(initialResponses).length > 0) {
-        setResponses(initialResponses)
+        setResponses(initialResponses);
       }
     }
-  }, [questions])
+  }, [questions]);
 
   const getResponse = (questionId: string): string => {
     return responses[questionId] || "";
@@ -110,7 +111,7 @@ export default function Part3Session({ id }: Part3SessionProps) {
     try {
       await saveResponses();
       await submitSession({ sessionId }).unwrap();
-      router.push(`/learning/speaking/result/${id}`);
+      router.push(`/learning/speaking/session/${id}/result/`);
     } catch (error) {
       console.error("Failed to submit session:", error);
     }

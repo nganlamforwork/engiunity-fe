@@ -51,7 +51,7 @@ export default function ResultSection({
                 Feedback & Corrections
               </TabsTrigger>
               <TabsTrigger value="sample" className="flex-1">
-                Sample Essay
+                Bài mẫu
               </TabsTrigger>
             </TabsList>
 

@@ -12,6 +12,11 @@ export enum ESpeakingSessionStatus {
   SUBMITTED = "Submitted",
   SCORED = "Scored",
 }
+export enum EScoreStatus {
+  NOT_SCORED = "Chưa chấm",
+  IN_PROGRESS = "Đang chấm",
+  SCORED = "Đã chấm",
+}
 
 // Backend question type
 export interface SpeakingQuestion {
@@ -52,27 +57,42 @@ export interface CreateSpeakingSessionDto {
   notes?: string;
   part: ESpeakingPart;
 }
-
-// Grading interfaces
-export interface CriteriaGrading {
-  score: number;
-  feedback: string;
-  strengths: string[];
-  improvements: string[];
-}
-
-export interface GradingResult {
-  ideaDevelopment: CriteriaGrading;
-  vocabulary: CriteriaGrading;
-  grammar: CriteriaGrading;
-  coherence: CriteriaGrading;
-  overallFeedback: string;
-  sampleAnswers: Record<string, string>;
-  keyVocabulary: Record<string, string[]>;
-}
 export interface SpeakingResponse {
   id?: number;
   questionId: number;
   transcript: string;
   audioUrl?: string;
+}
+export interface SpeakingEvaluation {
+  id?: number;
+  score: number;
+  scoreStatus: EScoreStatus;
+  scoreDetail: Evaluation;
+  speakingSession: SpeakingSession;
+}
+
+export interface Evaluation {
+  overview: Overview;
+  fluency_and_coherence: Criteria;
+  lexical_resource: Criteria;
+  grammatical_range_and_accuracy: Criteria;
+  pronunciation: Criteria;
+  model: string;
+}
+
+export interface Overview {
+  totalScore: number;
+  overallFeedback: string;
+  overallImprovementSuggestion: string;
+}
+
+export interface Criteria {
+  score: number;
+  feedback: string;
+  examples: Example[];
+  improvementSuggestion: string;
+}
+export interface Example {
+  excerpt: string;
+  comment: string;
 }

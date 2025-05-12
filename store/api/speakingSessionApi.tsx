@@ -5,8 +5,8 @@ import {
   CreateSpeakingSessionDto,
   SpeakingQuestion,
   SpeakingSession,
-  GradingResult,
   SpeakingResponse,
+  SpeakingEvaluation,
 } from "@/types/Speaking";
 
 const baseUrl = "speaking/sessions";
@@ -83,7 +83,7 @@ export const speakingSessionApi = createApi({
         };
       },
     }),
-    submitSession: builder.mutation<GradingResult, { sessionId: number }>({
+    submitSession: builder.mutation<SpeakingEvaluation, { sessionId: number }>({
       query: ({ sessionId }) => {
         return {
           url: `${baseUrl}/${sessionId}/submit`,
@@ -91,6 +91,15 @@ export const speakingSessionApi = createApi({
         };
       },
       invalidatesTags: ["Speaking Session"],
+    }),
+    getResult: builder.query<SpeakingEvaluation, { id: number }>({
+      query: ({ id }) => {
+        return {
+          url: `${baseUrl}/${id}/result`,
+          method: "GET",
+        };
+      },
+      providesTags: ["Speaking Session"],
     }),
   }),
 });
@@ -101,4 +110,5 @@ export const {
   useGetQuestionsQuery,
   useUpdateSessionResponsesMutation,
   useSubmitSessionMutation,
+  useGetResultQuery,
 } = speakingSessionApi;
