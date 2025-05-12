@@ -45,15 +45,22 @@ export default function Part1Session({ id }: Part1SessionProps) {
 
   const [updateSessionResponses] = useUpdateSessionResponsesMutation();
 
-  // Load initial responses if needed
-  // useEffect(() => {
-  //   if (sessionData && sessionData.responses) {
-  //     setResponses(sessionData.responses);
-  //   } else if (sessionData && sessionData.answers) {
-  //     // Migrate old data if exists
-  //     setResponses(sessionData.answers);
-  //   }
-  // }, [sessionData]);
+  useEffect(() => {
+    if (questions && questions.length > 0) {
+      const initialResponses: Record<string, string> = {};
+
+      questions.forEach((question) => {
+        if (question.response && question.response.transcript) {
+          initialResponses[question.id.toString()] =
+            question.response.transcript;
+        }
+      });
+
+      if (Object.keys(initialResponses).length > 0) {
+        setResponses(initialResponses);
+      }
+    }
+  }, [questions]);
 
   const handleResponseChange = (questionId: string, response: string) => {
     setResponses((prev) => ({

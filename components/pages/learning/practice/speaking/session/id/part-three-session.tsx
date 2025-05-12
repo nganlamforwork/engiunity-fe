@@ -50,22 +50,20 @@ export default function Part3Session({ id }: Part3SessionProps) {
   const answerMode = "text";
 
   useEffect(() => {
-    if (sessionData) {
-      const migratedResponses: Record<string, string> = {};
+    if (questions && questions.length > 0) {
+      const initialResponses: Record<string, string> = {}
 
-      if ("answers" in sessionData && sessionData.answers) {
-        Object.entries(sessionData.answers).forEach(([qid, ans]) => {
-          migratedResponses[qid] = ans as string;
-        });
-      } else if ("responses" in sessionData && sessionData.responses) {
-        Object.entries(sessionData.responses).forEach(([qid, resp]) => {
-          migratedResponses[qid] = resp as string;
-        });
+      questions.forEach((question) => {
+        if (question.response && question.response.transcript) {
+          initialResponses[question.id.toString()] = question.response.transcript
+        }
+      })
+
+      if (Object.keys(initialResponses).length > 0) {
+        setResponses(initialResponses)
       }
-
-      setResponses(migratedResponses);
     }
-  }, [sessionData]);
+  }, [questions])
 
   const getResponse = (questionId: string): string => {
     return responses[questionId] || "";

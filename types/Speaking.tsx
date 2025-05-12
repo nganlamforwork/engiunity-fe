@@ -22,6 +22,7 @@ export interface SpeakingQuestion {
   subQuestions?: string[];
   cueCard?: string[];
   followUp?: string;
+  response: SpeakingResponse;
 }
 
 // Backend session type
@@ -42,19 +43,7 @@ export interface Question {
   subQuestions?: string[];
   cueCard?: string[];
   followUp?: string[];
-}
-
-// Frontend session state (for Redux)
-export interface SessionState {
-  id: number | null;
-  topic: string;
-  notes?: string;
-  status: ESpeakingSessionStatus;
-  part: ESpeakingPart;
-  currentStep: number;
-  currentQuestionIndex: number;
-  responses: Record<string, string>;
-  createdAt?: string;
+  response?: string;
 }
 
 // DTO for creating a new speaking session
@@ -82,6 +71,7 @@ export interface GradingResult {
   keyVocabulary: Record<string, string[]>;
 }
 export interface SpeakingResponse {
+  id?: number;
   questionId: number;
   transcript: string;
   audioUrl?: string;

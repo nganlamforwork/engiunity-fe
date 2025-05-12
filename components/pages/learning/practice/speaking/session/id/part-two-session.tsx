@@ -44,17 +44,26 @@ export default function Part2Session({ id }: Part2SessionProps) {
     sessionId,
     part: ESpeakingPart.PART_2,
   });
-  console.log(questions);
 
   const [updateSessionResponses] = useUpdateSessionResponsesMutation();
 
-  // Khởi tạo responses từ sessionData
-  // useEffect(() => {
-  //   if (sessionData && !hasInitialized) {
-  //     setResponses(sessionData.responses || {});
-  //     setHasInitialized(true);
-  //   }
-  // }, [sessionData, hasInitialized]);
+  useEffect(() => {
+    if (questions && questions.length > 0 && !hasInitialized) {
+      const initialResponses: Record<string, string> = {}
+
+      questions.forEach((question) => {
+        if (question.response && question.response.transcript) {
+          initialResponses[question.id.toString()] = question.response.transcript
+        }
+      })
+
+      if (Object.keys(initialResponses).length > 0) {
+        setResponses(initialResponses)
+      }
+
+      setHasInitialized(true)
+    }
+  }, [questions, hasInitialized])
 
   const handleResponseChange = (questionId: string, response: string) => {
     setResponses((prev) => ({
