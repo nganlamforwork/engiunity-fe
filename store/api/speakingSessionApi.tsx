@@ -18,6 +18,15 @@ export const speakingSessionApi = createApi({
   refetchOnMountOrArgChange: false,
   tagTypes: ["Speaking Session"],
   endpoints: (builder) => ({
+    getSpeakingSessions: builder.query<SpeakingSession[], {}>({
+      query: () => {
+        return {
+          url: `${baseUrl}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["Speaking Session"],
+    }),
     createSpeakingSession: builder.mutation<
       SpeakingSession,
       CreateSpeakingSessionDto
@@ -105,6 +114,7 @@ export const speakingSessionApi = createApi({
 });
 
 export const {
+  useGetSpeakingSessionsQuery,
   useCreateSpeakingSessionMutation,
   useGetSpeakingSessionQuery,
   useGetQuestionsQuery,

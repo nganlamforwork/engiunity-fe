@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,175 +10,16 @@ import {
 } from "@/components/ui/card";
 import {
   ArrowRight,
-  BarChart,
-  Calendar,
   Headphones,
   Lightbulb,
-  ListChecks,
   MessageSquare,
   Mic,
 } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
 import { routes } from "@/utils/routes";
 
-interface Session {
-  id: string;
-  title: string;
-  type: string;
-  category: string;
-  description: string;
-  completed: boolean;
-  score: number | null;
-  date: string;
-}
-
-interface PracticeStats {
-  totalSessions: number;
-  completedSessions: number;
-  averageScore: number;
-  highestScore: number;
-  recentImprovement: number;
-  weakestArea: string;
-  strongestArea: string;
-}
-
-interface SpeakingHomeTabProps {
-  historyItems: Session[];
-  practiceStats: PracticeStats;
-}
-
-export function SpeakingHomeTab({
-  historyItems,
-  practiceStats,
-}: SpeakingHomeTabProps) {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
+export function SpeakingHomeTab() {
   return (
     <>
-      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center">
-              <BarChart className="mr-2 h-5 w-5 text-blue-500" />
-              Your Progress
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span>Completed Sessions</span>
-                  <span className="font-medium">
-                    {practiceStats.completedSessions}/
-                    {practiceStats.totalSessions}
-                  </span>
-                </div>
-                <Progress
-                  value={
-                    (practiceStats.completedSessions /
-                      practiceStats.totalSessions) *
-                    100
-                  }
-                  className="h-2"
-                />
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Average Score</span>
-                <span className="font-bold text-lg">
-                  {practiceStats.averageScore.toFixed(1)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Highest Score</span>
-                <span className="font-bold text-lg">
-                  {practiceStats.highestScore.toFixed(1)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Recent Improvement</span>
-                <span className="text-green-500 font-medium">
-                  +{practiceStats.recentImprovement.toFixed(1)}
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center">
-              <ListChecks className="mr-2 h-5 w-5 text-blue-500" />
-              Strengths & Weaknesses
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium mb-2">Strongest Area</h3>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
-                  <span>{practiceStats.strongestArea}</span>
-                </div>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-2">Needs Improvement</h3>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 rounded-full bg-amber-500 mr-2"></div>
-                  <span>{practiceStats.weakestArea}</span>
-                </div>
-              </div>
-              <div className="pt-2">
-                <Button variant="outline" size="sm" className="w-full" asChild>
-                  <Link href="/speaking/analytics">
-                    View Detailed Analytics
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center">
-              <Calendar className="mr-2 h-5 w-5 text-blue-500" />
-              Recent Activity
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {historyItems.slice(0, 3).map((item, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                    {item.score ? item.score.toFixed(1) : "—"}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{item.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {formatDate(item.date)}
-                    </p>
-                  </div>
-                </div>
-              ))}
-              <div className="pt-2">
-                <Button variant="outline" size="sm" className="w-full" asChild>
-                  <Link href="/learning/speaking/history">
-                    View All History
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div> */}
-
       {/* Rest of the component remains the same */}
       <div className="mb-4">
         <h2 className="text-xl font-semibold mb-4">
