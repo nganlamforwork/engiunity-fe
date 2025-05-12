@@ -1,84 +1,88 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Session } from "@/types/Speaking";
 import { PartOneQuestions } from "@/components/pages/learning/practice/speaking/session/id/part-one-questions";
 import HeaderSkill from "@/components/pages/learning/HeaderSkill";
 import { routes } from "@/utils/routes";
+import {
+  useGetQuestionsQuery,
+  useGetSpeakingSessionQuery,
+} from "@/store/api/speakingSessionApi";
+import { useAppDispatch, useAppSelector } from "@/store";
+import {
+  setCurrentQuestionIndex,
+  updateAnswer,
+  setSession,
+} from "@/store/slice/speakingSessionSlice";
+import { ESpeakingPart } from "@/types/Speaking";
 
 interface Part1SessionProps {
   id: string;
 }
+
 export default function Part1Session({ id }: Part1SessionProps) {
   const router = useRouter();
-  const [session, setSession] = useState<Session | null>(null);
-  const [answerMode, setAnswerMode] = useState<"text" | "chat">("text");
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useAppDispatch();
 
+  // Get session state from Redux
+  const { currentSession } = useAppSelector((state) => state.speakingSession);
+  const currentQuestionIndex = currentSession?.currentQuestionIndex || 0;
+
+  // Parse the ID to a number for the API
+  const sessionId = Number.parseInt(id, 10);
+
+  // Fetch session data from API
+  const {
+    data: sessionData,
+    isLoading: sessionLoading,
+    isError: sessionError,
+  } = useGetSpeakingSessionQuery({ id: sessionId });
+
+  // Fetch questions from the API
+  const {
+    data: questions,
+    isLoading: questionsLoading,
+    isError: questionsError,
+  } = useGetQuestionsQuery({
+    sessionId,
+    part: ESpeakingPart.PART_1,
+  });
+
+  // Initialize session in Redux when data is loaded
   useEffect(() => {
-    // In a real app, we would fetch this from an API
-    const sessionData = localStorage.getItem(`session_${id}`);
-    if (sessionData) {
-      const parsedSession = JSON.parse(sessionData);
-      setSession(parsedSession);
-
-      // Restore current question index if it exists
-      if (parsedSession.currentQuestionIndex !== undefined) {
-        setCurrentQuestionIndex(parsedSession.currentQuestionIndex);
-      }
-
-      setIsLoading(false);
-    } else {
-      router.push("/learning/speaking");
+    if (sessionData && !currentSession) {
+      dispatch(setSession(sessionData));
     }
-  }, [id, router]);
-
-  const updateSession = (updates: Partial<Session>) => {
-    if (!session) return;
-
-    const updatedSession = { ...session, ...updates };
-    localStorage.setItem(`session_${id}`, JSON.stringify(updatedSession));
-    setSession(updatedSession);
-  };
+  }, [sessionData, currentSession, dispatch]);
 
   const handleAnswerChange = (questionId: string, answer: string) => {
-    if (!session) return;
-
-    const updatedAnswers = { ...session.answers, [questionId]: answer };
-    updateSession({ answers: updatedAnswers });
+    dispatch(updateAnswer({ questionId, answer }));
   };
 
   const nextQuestion = () => {
-    if (!session) return;
-
-    const questions = session.questions.part1;
+    if (!questions) return;
 
     if (currentQuestionIndex < questions.length - 1) {
-      const newIndex = currentQuestionIndex + 1;
-      setCurrentQuestionIndex(newIndex);
-      updateSession({ currentQuestionIndex: newIndex });
+      dispatch(setCurrentQuestionIndex(currentQuestionIndex + 1));
     } else {
       // Move to Part 2
-      updateSession({ currentStep: 2, currentQuestionIndex: 0 });
+      dispatch(setCurrentQuestionIndex(0));
       router.push(`/learning/speaking/session/${id}/part-2`);
     }
   };
 
   const prevQuestion = () => {
-    if (!session || currentQuestionIndex === 0) return;
-
-    const newIndex = currentQuestionIndex - 1;
-    setCurrentQuestionIndex(newIndex);
-    updateSession({ currentQuestionIndex: newIndex });
+    if (currentQuestionIndex === 0) return;
+    dispatch(setCurrentQuestionIndex(currentQuestionIndex - 1));
   };
 
-  if (isLoading || !session) {
+  // Show loading state while fetching session or questions
+  if (sessionLoading || questionsLoading || !currentSession) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -86,19 +90,30 @@ export default function Part1Session({ id }: Part1SessionProps) {
     );
   }
 
-  const currentQuestion = session.questions.part1[currentQuestionIndex];
-  const isLastQuestion =
-    currentQuestionIndex === session.questions.part1.length - 1;
+  // Handle error state
+  if (sessionError || questionsError || !questions) {
+    return (
+      <div className="flex h-screen items-center justify-center flex-col">
+        <p className="text-red-500 mb-4">Failed to load session or questions</p>
+        <Button onClick={() => router.push("/learning/speaking")}>
+          Return to Speaking
+        </Button>
+      </div>
+    );
+  }
+
+  const currentQuestion = questions[currentQuestionIndex];
+  const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
   // Calculate progress
-  const totalQuestions = session.questions.part1.length;
+  const totalQuestions = questions.length;
   const progressPercentage =
     ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
   return (
     <div className="flex-1 overflow-auto">
       <HeaderSkill
-        title={session.topic}
+        title={currentSession.topic}
         description="Luyện tập kỹ năng nói IELTS - Part 1: Giới thiệu và câu hỏi chung"
         topElements={
           <Button
@@ -118,14 +133,14 @@ export default function Part1Session({ id }: Part1SessionProps) {
             <TabsTrigger value="part-1">Part 1</TabsTrigger>
             <TabsTrigger
               value="part-2"
-              disabled={!session.practiceType.includes("full")}
+              disabled={!currentSession.part.includes("full")}
               onClick={() => router.push(`/practice/session/${id}/part-2`)}
             >
               Part 2
             </TabsTrigger>
             <TabsTrigger
               value="part-3"
-              disabled={!session.practiceType.includes("full")}
+              disabled={!currentSession.part.includes("full")}
               onClick={() =>
                 router.push(`/learning/speaking/session/${id}/part-3`)
               }
@@ -147,10 +162,16 @@ export default function Part1Session({ id }: Part1SessionProps) {
         <div>
           {currentQuestion && (
             <PartOneQuestions
-              question={currentQuestion}
-              answer={session.answers[currentQuestion.id] || ""}
+              question={{
+                id: currentQuestion.id.toString(),
+                text: currentQuestion.text,
+                subQuestions: currentQuestion.subQuestions || [],
+              }}
+              answer={
+                currentSession.answers[currentQuestion.id.toString()] || ""
+              }
               onAnswerChange={(answer) =>
-                handleAnswerChange(currentQuestion.id, answer)
+                handleAnswerChange(currentQuestion.id.toString(), answer)
               }
             />
           )}
@@ -159,9 +180,14 @@ export default function Part1Session({ id }: Part1SessionProps) {
             <Textarea
               placeholder="Nhập câu trả lời của bạn ở đây..."
               className="min-h-[150px]"
-              value={session.answers[currentQuestion.id] || ""}
+              value={
+                currentSession.answers[currentQuestion.id.toString()] || ""
+              }
               onChange={(e) =>
-                handleAnswerChange(currentQuestion.id, e.target.value)
+                handleAnswerChange(
+                  currentQuestion.id.toString(),
+                  e.target.value
+                )
               }
             />
           </div>

@@ -9,7 +9,7 @@ export default async function Part2SessionPage({
 }: {
   params: { id: string };
 }) {
-  const { id } = params;
+  const { id } = await params;
 
   return <Part2Session id={id} />;
 }

@@ -5,7 +5,7 @@ export default async function SessionPage({
 }: {
   params: { id: string };
 }) {
-  const { id } = params;
+  const { id } = await params;
 
   redirect(`/learning/speaking/session/${id}/part-1`);
 }

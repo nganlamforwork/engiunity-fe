@@ -9,7 +9,7 @@ export default async function Part1SessionPage({
 }: {
   params: { id: string };
 }) {
-  const { id } = params;
+  const { id } =  params;
 
   return <Part1Session id={id} />;
 }

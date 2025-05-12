@@ -25,15 +25,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import type { UseFormReturn, FieldValues, FieldPath } from "react-hook-form";
-
-const topics = [
-  "Environment",
-  "Technology",
-  "Education",
-  "Health",
-  "Travel",
-  "Work",
-];
+import { topics } from "@/constants/topics";
 
 // Use FieldValues to make the component work with any form type
 export function TopicSelector<TFieldValues extends FieldValues = FieldValues>({
@@ -50,7 +42,7 @@ export function TopicSelector<TFieldValues extends FieldValues = FieldValues>({
       control={form.control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-col w-72 ">
+        <FormItem className="flex flex-col w-72">
           <FormLabel>Chủ đề</FormLabel>
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -65,34 +57,37 @@ export function TopicSelector<TFieldValues extends FieldValues = FieldValues>({
                   )}
                 >
                   {field.value
-                    ? topics.find((topic) => topic === field.value)
+                    ? topics.find((topic) => topic.topic === field.value)
+                        ?.topic || field.value
                     : "Chọn chủ đề..."}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </FormControl>
             </PopoverTrigger>
-            <PopoverContent className=" p-0">
+            <PopoverContent className="p-0">
               <Command>
                 <CommandInput placeholder="Tìm kiếm chủ đề..." />
                 <CommandList>
                   <CommandEmpty>Không tìm thấy chủ đề.</CommandEmpty>
                   <CommandGroup>
-                    {topics.map((topic) => (
+                    {topics.map((topicItem) => (
                       <CommandItem
-                        key={topic}
-                        value={topic}
+                        key={topicItem.topic}
+                        value={topicItem.topic}
                         onSelect={() => {
-                          form.setValue(name, topic as any);
+                          form.setValue(name, topicItem.topic as any);
                           setOpen(false);
                         }}
                       >
                         <Check
                           className={cn(
                             "mr-2 h-4 w-4",
-                            topic === field.value ? "opacity-100" : "opacity-0"
+                            topicItem.topic === field.value
+                              ? "opacity-100"
+                              : "opacity-0"
                           )}
                         />
-                        {topic}
+                        {topicItem.topic}
                       </CommandItem>
                     ))}
                   </CommandGroup>

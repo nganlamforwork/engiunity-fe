@@ -135,7 +135,7 @@ export default function Part2Session({ id }: Part2SessionProps) {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger
               value="part-1"
-              disabled={!session.practiceType.includes("full")}
+              disabled={!session.part.includes("full")}
               onClick={() =>
                 router.push(`/learning/speaking/session/${id}/part-1`)
               }
@@ -145,7 +145,7 @@ export default function Part2Session({ id }: Part2SessionProps) {
             <TabsTrigger value="part-2">Part 2</TabsTrigger>
             <TabsTrigger
               value="part-3"
-              disabled={!session.practiceType.includes("full")}
+              disabled={!session.part.includes("full")}
               onClick={() =>
                 router.push(`/learning/speaking/session/${id}/part-3`)
               }
