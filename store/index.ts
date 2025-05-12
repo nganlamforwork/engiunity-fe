@@ -2,15 +2,15 @@
 
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { persistReducer, persistStore } from "redux-persist";
-
 import { authApi } from "@/store/api/authApi";
 import { authSlice } from "@/store/slice/authSlice";
 import { sessionSlice } from "./slice/sessionSlice";
+import { persistReducer, persistStore, createMigrate } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { usersApi } from "./api/usersApi";
 import { vocabulariesApi } from "./api/vocabulariesApi";
 import { writingExercisesApi } from "./api/writingExercisesApi";
+import { speakingSessionApi } from "./api/speakingSessionApi";
 
 const persistConfig = {
   key: "root",
@@ -24,6 +24,7 @@ const combinedReducers = combineReducers({
   [usersApi.reducerPath]: usersApi.reducer,
   [vocabulariesApi.reducerPath]: vocabulariesApi.reducer,
   [writingExercisesApi.reducerPath]: writingExercisesApi.reducer,
+  [speakingSessionApi.reducerPath]: speakingSessionApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, combinedReducers);
@@ -37,7 +38,8 @@ export const store = configureStore({
       .concat(authApi.middleware)
       .concat(usersApi.middleware)
       .concat(writingExercisesApi.middleware)
-      .concat(vocabulariesApi.middleware),
+      .concat(vocabulariesApi.middleware)
+      .concat(speakingSessionApi.middleware),
 });
 export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>;

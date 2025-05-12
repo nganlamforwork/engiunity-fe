@@ -12,12 +12,9 @@ export const metadata: Metadata = {
 
 const WritingPage = () => {
   return (
-    <div className="grid grid-cols-3 gap-4">
-      <div className="col-span-2 rounded">
-        <HeaderSkill title={"Kĩ năng viết"} />
-        <Tabs tabs={tabItems} defaultValue="lesson" />
-      </div>
-      <Skeleton className="w-full h-[250px] col-span-1 " />
+    <div className="flex flex-col gap-4">
+      <HeaderSkill title={"Kĩ năng viết"} />
+      <Tabs tabs={tabItems} defaultValue="lesson" />
     </div>
   );
 };

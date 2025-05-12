@@ -53,7 +53,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${raleway.variable} antialiased`}>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
