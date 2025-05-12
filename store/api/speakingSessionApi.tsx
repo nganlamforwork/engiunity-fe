@@ -5,6 +5,7 @@ import {
   CreateSpeakingSessionDto,
   SpeakingQuestion,
   SpeakingSession,
+  GradingResult,
 } from "@/types/Speaking";
 
 const baseUrl = "speaking/sessions";
@@ -61,6 +62,28 @@ export const speakingSessionApi = createApi({
       },
       providesTags: ["Speaking Session"],
     }),
+    updateSessionAnswers: builder.mutation<
+      void,
+      { sessionId: number; answers: Record<string, string> }
+    >({
+      query: ({ sessionId, answers }) => {
+        return {
+          url: `${baseUrl}/${sessionId}/response`,
+          method: "PATCH",
+          data: { answers },
+        };
+      },
+      invalidatesTags: ["Speaking Session"],
+    }),
+    submitSession: builder.mutation<GradingResult, { sessionId: number }>({
+      query: ({ sessionId }) => {
+        return {
+          url: `${baseUrl}/${sessionId}/submit`,
+          method: "POST",
+        };
+      },
+      invalidatesTags: ["Speaking Session"],
+    }),
   }),
 });
 
@@ -68,4 +91,6 @@ export const {
   useCreateSpeakingSessionMutation,
   useGetSpeakingSessionQuery,
   useGetQuestionsQuery,
+  useUpdateSessionAnswersMutation,
+  useSubmitSessionMutation,
 } = speakingSessionApi;

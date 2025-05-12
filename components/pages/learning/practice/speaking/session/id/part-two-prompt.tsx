@@ -1,72 +1,67 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Clock, Pause, Play, RotateCcw } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-import { Question } from "@/types/Speaking";
+import { useState, useEffect } from "react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Clock, Pause, Play, RotateCcw } from "lucide-react"
+import { Progress } from "@/components/ui/progress"
+import type { Question } from "@/types/Speaking"
 
 interface PartTwoPromptProps {
-  question: Question;
-  answer: string;
-  onAnswerChange: (answer: string) => void;
-  answerMode: "text" | "chat";
+  question: Question
+  answer: string
+  onAnswerChange: (answer: string) => void
+  answerMode: "text" | "chat"
 }
 
-export function PartTwoPrompt({
-  question,
-  answer,
-  onAnswerChange,
-  answerMode,
-}: PartTwoPromptProps) {
-  const [timerActive, setTimerActive] = useState(false);
-  const [timeElapsed, setTimeElapsed] = useState(0);
-  const [preparationTime, setPreparationTime] = useState(60); // 1 minute preparation time
-  const [isPreparing, setIsPreparing] = useState(true);
+export function PartTwoPrompt({ question, answer, onAnswerChange, answerMode }: PartTwoPromptProps) {
+  const [timerActive, setTimerActive] = useState(false)
+  const [timeElapsed, setTimeElapsed] = useState(0)
+  const [preparationTime, setPreparationTime] = useState(60) // 1 minute preparation time
+  const [isPreparing, setIsPreparing] = useState(true)
 
-  const totalSpeakingTime = 120; // 2 minutes speaking time
+  const totalSpeakingTime = 120 // 2 minutes speaking time
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: NodeJS.Timeout
 
     if (timerActive) {
       interval = setInterval(() => {
         setTimeElapsed((prev) => {
-          const newTime = prev + 1;
+          const newTime = prev + 1
 
           if (isPreparing && newTime >= preparationTime) {
-            setIsPreparing(false);
-            return 0; // Reset timer for speaking time
+            setIsPreparing(false)
+            return 0 // Reset timer for speaking time
           }
 
           if (!isPreparing && newTime >= totalSpeakingTime) {
-            setTimerActive(false);
+            setTimerActive(false)
           }
 
-          return newTime;
-        });
-      }, 1000);
+          return newTime
+        })
+      }, 1000)
     }
 
-    return () => clearInterval(interval);
-  }, [timerActive, isPreparing, preparationTime]);
+    return () => clearInterval(interval)
+  }, [timerActive, isPreparing, preparationTime])
 
   const resetTimer = () => {
-    setTimerActive(false);
-    setTimeElapsed(0);
-    setIsPreparing(true);
-  };
+    setTimerActive(false)
+    setTimeElapsed(0)
+    setIsPreparing(true)
+  }
 
   const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
-  };
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`
+  }
 
   const progressPercentage = isPreparing
     ? (timeElapsed / preparationTime) * 100
-    : (timeElapsed / totalSpeakingTime) * 100;
+    : (timeElapsed / totalSpeakingTime) * 100
 
   return (
     <div className="space-y-4">
@@ -90,25 +85,19 @@ export function PartTwoPrompt({
               <div className="flex items-center">
                 <Clock className="mr-2 h-4 w-4" />
                 <span className="font-medium">
-                  {isPreparing ? "Preparation Time:" : "Speaking Time:"}{" "}
-                  {formatTime(timeElapsed)}
+                  {isPreparing ? "Preparation Time:" : "Speaking Time:"} {formatTime(timeElapsed)}
                 </span>
               </div>
 
               <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setTimerActive(!timerActive)}
-                >
+                <Button variant="outline" size="sm" onClick={() => setTimerActive(!timerActive)}>
                   {timerActive ? (
                     <>
                       <Pause className="mr-1 h-4 w-4" /> Pause
                     </>
                   ) : (
                     <>
-                      <Play className="mr-1 h-4 w-4" />{" "}
-                      {timeElapsed === 0 ? "Start" : "Resume"}
+                      <Play className="mr-1 h-4 w-4" /> {timeElapsed === 0 ? "Start" : "Resume"}
                     </>
                   )}
                 </Button>
@@ -125,8 +114,8 @@ export function PartTwoPrompt({
               {isPreparing
                 ? "Use this time to make notes and prepare your answer."
                 : timeElapsed < 60
-                ? "You should speak for at least 1 minute."
-                : "Try to conclude your answer soon."}
+                  ? "You should speak for at least 1 minute."
+                  : "Try to conclude your answer soon."}
             </p>
           </div>
         </CardContent>
@@ -134,11 +123,9 @@ export function PartTwoPrompt({
 
       {answerMode === "text" && (
         <div className="mt-4">
-          <p className="text-sm text-muted-foreground mb-2">
-            Type your answer below as if you were speaking:
-          </p>
+          <p className="text-sm text-muted-foreground mb-2">Type your answer below as if you were speaking:</p>
         </div>
       )}
     </div>
-  );
+  )
 }

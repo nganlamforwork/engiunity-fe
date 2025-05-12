@@ -29,7 +29,7 @@ export function PartThreeQuestions({
             </ul>
           )}
 
-          {question.followUp && (
+          {question.followUp && question.followUp.length > 0 && (
             <div className="mt-4 pt-4 border-t">
               <p className="text-sm font-medium">
                 Follow-up questions to consider:

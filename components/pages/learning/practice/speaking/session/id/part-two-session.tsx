@@ -1,102 +1,101 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Session } from "@/types/Speaking";
-import { PartTwoPrompt } from "./part-two-prompt";
+import { PartTwoPrompt } from "@/components/pages/learning/practice/speaking/session/id/part-two-prompt";
 import HeaderSkill from "@/components/pages/learning/HeaderSkill";
 import { routes } from "@/utils/routes";
+import {
+  useGetQuestionsQuery,
+  useGetSpeakingSessionQuery,
+} from "@/store/api/speakingSessionApi";
+import { useAppDispatch, useAppSelector } from "@/store";
+import {
+  setCurrentQuestionIndex,
+  updateAnswer,
+  setSession,
+  setCurrentStep,
+} from "@/store/slice/speakingSessionSlice";
+import { ESpeakingPart } from "@/types/Speaking";
 
 interface Part2SessionProps {
   id: string;
 }
+
 export default function Part2Session({ id }: Part2SessionProps) {
   const router = useRouter();
-  const [session, setSession] = useState<Session | null>(null);
-  const [answerMode, setAnswerMode] = useState<"text" | "chat">("text");
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useAppDispatch();
 
+  // Get session state from Redux
+  const { currentSession } = useAppSelector((state) => state.speakingSession);
+  const currentQuestionIndex = currentSession?.currentQuestionIndex || 0;
+  const answerMode = "text"; // Default to text mode
+
+  // Parse the ID to a number for the API
+  const sessionId = Number.parseInt(id, 10);
+
+  // Fetch session data from API
+  const {
+    data: sessionData,
+    isLoading: sessionLoading,
+    isError: sessionError,
+  } = useGetSpeakingSessionQuery({ id: sessionId });
+
+  // Fetch questions from the API
+  const {
+    data: questions,
+    isLoading: questionsLoading,
+    isError: questionsError,
+  } = useGetQuestionsQuery({
+    sessionId,
+    part: ESpeakingPart.PART_2,
+  });
+
+  // Initialize session in Redux when data is loaded
   useEffect(() => {
-    // In a real app, we would fetch this from an API
-    const sessionData = localStorage.getItem(`session_${id}`);
-    if (sessionData) {
-      const parsedSession = JSON.parse(sessionData);
-      setSession(parsedSession);
-
-      // If we're coming from part-1, reset the question index
-      if (parsedSession.currentStep !== 2) {
-        updateSession({
-          ...parsedSession,
-          currentStep: 2,
-          currentQuestionIndex: 0,
-        });
-      } else if (parsedSession.currentQuestionIndex !== undefined) {
-        setCurrentQuestionIndex(parsedSession.currentQuestionIndex);
-      }
-
-      setIsLoading(false);
-    } else {
-      router.push("/learning/speaking");
+    if (sessionData && !currentSession) {
+      dispatch(setSession(sessionData));
+      dispatch(setCurrentStep(2)); // Set to Part 2
+      dispatch(setCurrentQuestionIndex(0)); // Reset question index
+    } else if (currentSession && currentSession.currentStep !== 2) {
+      dispatch(setCurrentStep(2)); // Update to Part 2
+      dispatch(setCurrentQuestionIndex(0)); // Reset question index
     }
-  }, [id, router]);
-
-  const updateSession = (updatedSession: Session) => {
-    localStorage.setItem(`session_${id}`, JSON.stringify(updatedSession));
-    setSession(updatedSession);
-  };
+  }, [sessionData, currentSession, dispatch]);
 
   const handleAnswerChange = (questionId: string, answer: string) => {
-    if (!session) return;
-
-    const updatedAnswers = { ...session.answers, [questionId]: answer };
-    updateSession({ ...session, answers: updatedAnswers });
+    dispatch(updateAnswer({ questionId, answer }));
   };
 
   const nextQuestion = () => {
-    if (!session) return;
-
-    const questions = session.questions.part2;
+    if (!questions) return;
 
     if (currentQuestionIndex < questions.length - 1) {
-      const newIndex = currentQuestionIndex + 1;
-      setCurrentQuestionIndex(newIndex);
-      updateSession({ ...session, currentQuestionIndex: newIndex });
+      dispatch(setCurrentQuestionIndex(currentQuestionIndex + 1));
     } else {
       // Move to Part 3
-      updateSession({ ...session, currentStep: 3, currentQuestionIndex: 0 });
+      dispatch(setCurrentStep(3));
+      dispatch(setCurrentQuestionIndex(0));
       router.push(`/learning/speaking/session/${id}/part-3`);
     }
   };
 
   const prevQuestion = () => {
-    if (!session) return;
-
     if (currentQuestionIndex > 0) {
-      const newIndex = currentQuestionIndex - 1;
-      setCurrentQuestionIndex(newIndex);
-      updateSession({ ...session, currentQuestionIndex: newIndex });
+      dispatch(setCurrentQuestionIndex(currentQuestionIndex - 1));
     } else {
       // Go back to Part 1
       router.push(`/learning/speaking/session/${id}/part-1`);
     }
   };
 
-  if (isLoading || !session) {
+  // Show loading state while fetching session or questions
+  if (sessionLoading || questionsLoading || !currentSession) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -104,21 +103,31 @@ export default function Part2Session({ id }: Part2SessionProps) {
     );
   }
 
-  const currentQuestion = session.questions.part2[currentQuestionIndex];
-  const isLastQuestion =
-    currentQuestionIndex === session.questions.part2.length - 1;
+  // Handle error state
+  if (sessionError || questionsError || !questions) {
+    return (
+      <div className="flex h-screen items-center justify-center flex-col">
+        <p className="text-red-500 mb-4">Failed to load session or questions</p>
+        <Button onClick={() => router.push("/learning/speaking")}>
+          Return to Speaking
+        </Button>
+      </div>
+    );
+  }
+
+  const currentQuestion = questions[currentQuestionIndex];
+  const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
   // Calculate progress
-  const totalQuestions = session.questions.part2.length;
+  const totalQuestions = questions.length;
   const progressPercentage =
     ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
   return (
     <div className="flex-1 overflow-auto">
       <HeaderSkill
-        title={session.topic}
-        description="
-          Luyện tập kỹ năng nói IELTS - Part 2: Nói dài (Cue card)"
+        title={currentSession.topic}
+        description="Luyện tập kỹ năng nói IELTS - Part 2: Nói dài (Cue card)"
         topElements={
           <Button
             variant="ghost"
@@ -135,7 +144,7 @@ export default function Part2Session({ id }: Part2SessionProps) {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger
               value="part-1"
-              disabled={!session.part.includes("full")}
+              disabled={!currentSession.part.includes(ESpeakingPart.FULL)}
               onClick={() =>
                 router.push(`/learning/speaking/session/${id}/part-1`)
               }
@@ -145,7 +154,7 @@ export default function Part2Session({ id }: Part2SessionProps) {
             <TabsTrigger value="part-2">Part 2</TabsTrigger>
             <TabsTrigger
               value="part-3"
-              disabled={!session.part.includes("full")}
+              disabled={!currentSession.part.includes(ESpeakingPart.FULL)}
               onClick={() =>
                 router.push(`/learning/speaking/session/${id}/part-3`)
               }
@@ -167,10 +176,17 @@ export default function Part2Session({ id }: Part2SessionProps) {
         <div>
           {currentQuestion && (
             <PartTwoPrompt
-              question={currentQuestion}
-              answer={session.answers[currentQuestion.id] || ""}
+              question={{
+                id: currentQuestion.id.toString(),
+                text: currentQuestion.text,
+                subQuestions: currentQuestion.subQuestions || [],
+                cueCard: currentQuestion.cueCard || [],
+              }}
+              answer={
+                currentSession.answers[currentQuestion.id.toString()] || ""
+              }
               onAnswerChange={(answer) =>
-                handleAnswerChange(currentQuestion.id, answer)
+                handleAnswerChange(currentQuestion.id.toString(), answer)
               }
               answerMode={answerMode}
             />
@@ -181,9 +197,14 @@ export default function Part2Session({ id }: Part2SessionProps) {
               <Textarea
                 placeholder="Nhập câu trả lời của bạn ở đây..."
                 className="min-h-[150px]"
-                value={session.answers[currentQuestion.id] || ""}
+                value={
+                  currentSession.answers[currentQuestion.id.toString()] || ""
+                }
                 onChange={(e) =>
-                  handleAnswerChange(currentQuestion.id, e.target.value)
+                  handleAnswerChange(
+                    currentQuestion.id.toString(),
+                    e.target.value
+                  )
                 }
               />
             </div>
