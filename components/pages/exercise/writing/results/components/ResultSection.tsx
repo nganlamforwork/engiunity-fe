@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 
-import { mockSubmissions } from "@/lib/mock-data";
 import SubmissionDetails from "./SubmissionDetails";
 import SubmissionHistory from "./SubmissionHistory";
 import TaskSection from "./TaskSection";
 import { IExerciseItem, IResponseItem } from "@/types/WritingExercise";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import SampleEssayGenerator from "./SampleEssayGenerator";
 
 interface ResultSectionProps {
   exercise: IExerciseItem;
@@ -44,9 +45,29 @@ export default function ResultSection({
         </div>
 
         <div className="md:col-span-3">
-          {selectedSubmission && (
-            <SubmissionDetails submission={selectedSubmission} />
-          )}
+          <Tabs defaultValue="feedback">
+            <TabsList className="w-full">
+              <TabsTrigger value="feedback" className="flex-1">
+                Feedback & Corrections
+              </TabsTrigger>
+              <TabsTrigger value="sample" className="flex-1">
+                Bài mẫu
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="feedback" className="mt-4">
+              {selectedSubmission && (
+                <SubmissionDetails submission={selectedSubmission} />
+              )}
+            </TabsContent>
+
+            <TabsContent value="sample" className="mt-4">
+              <SampleEssayGenerator
+                userEssay={selectedSubmission?.content || null}
+                taskDescription={exercise.content}
+              />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

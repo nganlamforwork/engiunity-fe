@@ -17,10 +17,7 @@ interface DynamicTabsProps {
 }
 export function Tabs({ tabs, defaultValue }: DynamicTabsProps) {
   return (
-    <ShadcnuiTabs
-      defaultValue={defaultValue ?? tabs[0]?.value}
-      className="mt-4"
-    >
+    <ShadcnuiTabs defaultValue={defaultValue ?? tabs[0]?.value}>
       <TabsList>
         {tabs.map((tab) => (
           <TabsTrigger key={tab.value} className="w-[120px]" value={tab.value}>

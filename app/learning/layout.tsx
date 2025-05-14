@@ -15,7 +15,7 @@ const LearningLayout = ({
         <header>
           <Header />
         </header>
-        <div className="w-full mx-auto max-w-7xl py-4 px-4">{children}</div>
+        <div className="w-full py-4 px-4">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

@@ -7,13 +7,23 @@ import BannerBook from "@/public/practice-banner-book.svg";
 
 interface HeaderSkillProps {
   title: string;
+  description?: string;
+  topElements?: React.ReactNode;
 }
 
-export default function HeaderSkill({ title }: HeaderSkillProps) {
+export default function HeaderSkill({
+  title,
+  description,
+  topElements,
+}: HeaderSkillProps) {
   return (
     <div className="relative flex py-4 px-8  w-full items-center rounded-lg bg-brand-accent text-palette-blue-foreground  md:rounded-card ">
-      <div className="text-3xl font-extrabold  text-brand-accent-foreground">
-        {title}
+      <div className="flex flex-col gap-2 items-start">
+        {topElements}
+        <h1 className="text-3xl font-extrabold  text-brand-accent-foreground">
+          {title}
+        </h1>
+        {description && <p>{description}</p>}
       </div>
       <Image
         src={BannerDashLine}

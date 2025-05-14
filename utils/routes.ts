@@ -46,15 +46,21 @@ export const routes = {
       overview: {
         value: "/learning/overview",
       },
+      speaking: {
+        value: "/learning/speaking",
+        new: {
+          value: "/learning/speaking/new",
+        },
+        history: {
+          value: "/learning/speaking/history",
+        },
+      },
       practice: {
         listening: {
           value: "/learning/practice/listening",
         },
         reading: {
           value: "/learning/practice/reading",
-        },
-        speaking: {
-          value: "/learning/practice/speaking",
         },
         writing: {
           value: "/learning/practice/writing",
@@ -83,12 +89,12 @@ export const sideBarData = {
   practice: [
     {
       name: "Đọc",
-      url: "/learning/practice/reading",
+      url: "/learning/reading",
       icon: BookOpenText,
     },
     {
       name: "Nghe",
-      url: "/learning/practice/listening",
+      url: "/learning/listening",
       icon: Headphones,
     },
     {
@@ -98,7 +104,7 @@ export const sideBarData = {
     },
     {
       name: "Nói",
-      url: "/learning/practice/speaking",
+      url: "/learning/speaking",
       icon: Mic,
     },
     {
