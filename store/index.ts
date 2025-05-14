@@ -10,6 +10,7 @@ import { sessionSlice } from "./slice/sessionSlice";
 import storage from "redux-persist/lib/storage";
 import { usersApi } from "./api/usersApi";
 import { vocabulariesApi } from "./api/vocabulariesApi";
+import { wordExpansionApi } from "./api/wordExpansionApi";
 import { writingExercisesApi } from "./api/writingExercisesApi";
 
 const persistConfig = {
@@ -23,6 +24,7 @@ const combinedReducers = combineReducers({
   [authApi.reducerPath]: authApi.reducer,
   [usersApi.reducerPath]: usersApi.reducer,
   [vocabulariesApi.reducerPath]: vocabulariesApi.reducer,
+  [wordExpansionApi.reducerPath]: wordExpansionApi.reducer,
   [writingExercisesApi.reducerPath]: writingExercisesApi.reducer,
 });
 
@@ -37,7 +39,8 @@ export const store = configureStore({
       .concat(authApi.middleware)
       .concat(usersApi.middleware)
       .concat(writingExercisesApi.middleware)
-      .concat(vocabulariesApi.middleware),
+      .concat(vocabulariesApi.middleware)
+      .concat(wordExpansionApi.middleware),
 });
 export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>;

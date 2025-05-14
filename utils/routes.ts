@@ -112,6 +112,12 @@ export const sideBarData = {
           icon: CaseUpper,
         },
         {
+          name: "Word Expansion",
+          url: "/learning/practice/others/word-expansion",
+          icon: Text,
+        },
+        ,
+        {
           name: "Idioms & Collocations",
           url: "/learning/practice/others/idoms",
           icon: Text,
