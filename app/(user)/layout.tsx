@@ -1,4 +1,5 @@
 import Header from "@/components/common/Header";
+import { Footer } from "@/components/pages/home/footer";
 import React from "react";
 
 const HomeLayout = ({
@@ -7,9 +8,10 @@ const HomeLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex min-h-screen flex-col">
       <Header />
       {children}
+      <Footer />
     </div>
   );
 };

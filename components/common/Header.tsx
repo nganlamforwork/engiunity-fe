@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Bell, Moon, MoonIcon, Sun, User } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,7 @@ import { RootState, useAppDispatch, useAppSelector } from "@/store";
 import { useRouter } from "next/navigation";
 import { routes } from "@/utils/routes";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { cn } from "@/lib/utils";
 
 const Header = () => {
   const { setTheme } = useTheme();
@@ -38,8 +39,27 @@ const Header = () => {
     dispatch(logout());
     router.push("/");
   };
+
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   return (
-    <div className="shadow-sm w-full sticky top-0 bg-white dark:bg-gray-900 z-[9]">
+    <header
+      className={cn(
+        "fixed top-0 z-40 w-full transition-all duration-300",
+        isScrolled
+          ? "border-b bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 py-2"
+          : "bg-transparent py-4"
+      )}
+    >
       <div className="w-full mx-auto max-w-7xl py-2  flex items-center justify-between">
         <div className="flex items-center justify-between flex-1 gap-9 relative">
           <div>
@@ -132,7 +152,7 @@ const Header = () => {
           </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 
